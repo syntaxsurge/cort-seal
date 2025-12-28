@@ -104,18 +104,6 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 md:flex">
-              <Button asChild variant="secondary" size="sm">
-                <Link href="/validate">Mint a seal</Link>
-              </Button>
-              <Button
-                asChild
-                size="sm"
-                className="bg-linear-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
-              >
-                <Link href="/try">Start a check</Link>
-              </Button>
-            </div>
             <ThemeToggle />
             <div className="hidden md:block">
               <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
@@ -154,24 +142,8 @@ export function SiteHeader() {
                   {link.label}
                 </Link>
                 ))}
-              <div className="mt-2 flex flex-col gap-2">
-                <Button asChild variant="secondary" size="sm">
-                  <Link href="/validate" onClick={() => setOpen(false)}>
-                    Mint a seal
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className="bg-linear-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
-                >
-                  <Link href="/try" onClick={() => setOpen(false)}>
-                    Start a check
-                  </Link>
-                </Button>
-                <div className="pt-2">
-                  <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
-                </div>
+              <div className="mt-2 pt-2">
+                <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
               </div>
             </div>
           </div>
