@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { z } from "zod";
 
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,33 +29,29 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
   });
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10 space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+    <div className="mx-auto w-full max-w-6xl px-6 py-12 space-y-8">
+      <PageHeader
+        eyebrow={
+          <>
             <Link href="/" className="underline underline-offset-4">
               CortSeal
             </Link>{" "}
             / Directory
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight">Seal directory</h1>
-          <p className="text-muted-foreground">
-            Public verification artifacts with share pages, badges, and embeds.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <Button asChild>
-            <Link href="/validate">Validate a claim</Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/try">Try drafts</Link>
-          </Button>
-          <Button asChild variant="secondary">
-            <Link href="/audit">Audit a URL</Link>
-          </Button>
-        </div>
-      </div>
+          </>
+        }
+        title="Seal directory"
+        description="Browse public verification artifacts with share pages, badges, and embeds."
+        actions={
+          <>
+            <Button asChild variant="secondary">
+              <Link href="/try">Try drafts</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/validate">Validate a claim</Link>
+            </Button>
+          </>
+        }
+      />
 
       <div className="flex flex-wrap gap-2">
         <Button asChild variant={parsedVerdict.success ? "secondary" : "default"} size="sm">
@@ -125,4 +122,3 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
     </div>
   );
 }
-

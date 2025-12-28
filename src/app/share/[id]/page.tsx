@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { AnalysisResultCards } from "@/features/cortseal/components/AnalysisResultCards";
 import type { AnalysisDoc } from "@/features/cortseal/services/analyses";
@@ -19,7 +20,7 @@ export default async function SharePage({ params }: PageProps) {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return (
-      <div className="mx-auto w-full max-w-3xl px-6 py-10">
+      <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <h1 className="text-2xl font-semibold tracking-tight">Unable to load proof</h1>
         <p className="mt-2 text-muted-foreground">
           Fix your environment configuration and try again.
@@ -41,7 +42,7 @@ export default async function SharePage({ params }: PageProps) {
   const parsedBundle = cortsealProofBundleSchema.safeParse(JSON.parse(proofResult.bundleJson));
   if (!parsedBundle.success) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-6 py-10">
+      <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <h1 className="text-2xl font-semibold tracking-tight">Invalid proof bundle</h1>
         <p className="mt-2 text-muted-foreground">
           The stored proof bundle JSON did not match the expected schema.
@@ -73,34 +74,38 @@ export default async function SharePage({ params }: PageProps) {
   const createdAtLabel = new Date(proofResult.createdAt).toLocaleString();
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+    <div className="mx-auto w-full max-w-6xl px-6 py-12 space-y-8">
+      <PageHeader
+        eyebrow={
+          <>
             <Link href="/" className="underline underline-offset-4">
               CortSeal
             </Link>{" "}
             / Share
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight">Shareable proof</h1>
-          <p className="text-muted-foreground">
-            Proof ID: <span className="font-medium text-foreground">{proofResult.publicId}</span>{" "}
-            · Created: <span className="font-medium text-foreground">{createdAtLabel}</span> · Hash:{" "}
+          </>
+        }
+        title="Shareable proof"
+        description="Immutable proof bundle with deterministic checks and evidence snapshot."
+        meta={
+          <>
+            Proof ID: <span className="font-medium text-foreground">{proofResult.publicId}</span> ·
+            Created: <span className="font-medium text-foreground">{createdAtLabel}</span> · Hash:{" "}
             <span className="font-medium text-foreground">
               {proofResult.bundleHashSha256}
             </span>
-          </p>
-        </div>
-
-        <Button asChild variant="secondary">
-          <Link href="/try">Try CortSeal</Link>
-        </Button>
-      </div>
+          </>
+        }
+        actions={
+          <Button asChild variant="secondary">
+            <Link href="/try">Try CortSeal</Link>
+          </Button>
+        }
+      />
 
       {deterministicChecks.length > 0 ? (
-        <div className="mb-8 rounded-lg border p-4">
-          <p className="text-sm font-medium">Deterministic checks</p>
-          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-border/70 bg-card/70 p-5 text-sm">
+          <p className="font-medium">Deterministic checks</p>
+          <ul className="mt-3 space-y-2 text-muted-foreground">
             {deterministicChecks.map((check) => (
               <li key={check.id} className="flex flex-wrap items-start gap-2">
                 <span className={check.passed ? "text-emerald-700" : "text-rose-700"}>

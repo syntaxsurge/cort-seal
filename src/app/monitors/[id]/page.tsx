@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { GenericId } from "convex/values"
 
+import { PageHeader } from "@/components/layout/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -33,10 +34,10 @@ export default async function MonitorDetailsPage({ params }: PageProps) {
   const locked = typeof monitor.lockedUntil === "number" && monitor.lockedUntil > Date.now()
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+    <div className="mx-auto w-full max-w-6xl px-6 py-12 space-y-8">
+      <PageHeader
+        eyebrow={
+          <>
             <Link href="/" className="underline underline-offset-4">
               CortSeal
             </Link>{" "}
@@ -45,38 +46,33 @@ export default async function MonitorDetailsPage({ params }: PageProps) {
               Monitors
             </Link>{" "}
             / {monitor.name}
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight">{monitor.name}</h1>
-          <p className="text-muted-foreground">
-            <span className="font-medium text-foreground">{monitor.kind.toUpperCase()}</span> ·{" "}
-            Every{" "}
-            <span className="font-medium text-foreground">{monitor.intervalMinutes} min</span> ·{" "}
-            Next run{" "}
-            <span className="font-medium text-foreground">
-              {formatWhen(monitor.nextRunAt)}
-            </span>
-          </p>
-        </div>
+          </>
+        }
+        title={monitor.name}
+        description={`${monitor.kind.toUpperCase()} monitor · Every ${monitor.intervalMinutes} min · Next run ${formatWhen(
+          monitor.nextRunAt
+        )}`}
+        actions={
+          <>
+            <form action={runMonitorNow}>
+              <input type="hidden" name="monitorId" value={monitor._id} />
+              <input type="hidden" name="returnTo" value={`/monitors/${monitor._id}`} />
+              <Button type="submit" variant="secondary" disabled={locked}>
+                {locked ? "Running…" : "Run now"}
+              </Button>
+            </form>
 
-        <div className="flex flex-wrap gap-2">
-          <form action={runMonitorNow}>
-            <input type="hidden" name="monitorId" value={monitor._id} />
-            <input type="hidden" name="returnTo" value={`/monitors/${monitor._id}`} />
-            <Button type="submit" variant="secondary" disabled={locked}>
-              {locked ? "Running…" : "Run now"}
-            </Button>
-          </form>
-
-          <form action={setMonitorEnabled}>
-            <input type="hidden" name="monitorId" value={monitor._id} />
-            <input type="hidden" name="returnTo" value={`/monitors/${monitor._id}`} />
-            <input type="hidden" name="enabled" value={String(!monitor.enabled)} />
-            <Button type="submit" variant="outline" disabled={locked}>
-              {monitor.enabled ? "Disable" : "Enable"}
-            </Button>
-          </form>
-        </div>
-      </div>
+            <form action={setMonitorEnabled}>
+              <input type="hidden" name="monitorId" value={monitor._id} />
+              <input type="hidden" name="returnTo" value={`/monitors/${monitor._id}`} />
+              <input type="hidden" name="enabled" value={String(!monitor.enabled)} />
+              <Button type="submit" variant="outline" disabled={locked}>
+                {monitor.enabled ? "Disable" : "Enable"}
+              </Button>
+            </form>
+          </>
+        }
+      />
 
       <div className="space-y-4">
         <Card className="p-5 space-y-2">

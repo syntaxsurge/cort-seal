@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
+import { PageHeader } from "@/components/layout/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -24,7 +25,7 @@ export default async function SealPage({ params }: PageProps) {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error"
     return (
-      <div className="mx-auto w-full max-w-3xl px-6 py-10">
+      <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <h1 className="text-2xl font-semibold tracking-tight">
           Unable to load seal
         </h1>
@@ -46,21 +47,30 @@ export default async function SealPage({ params }: PageProps) {
   if (!seal) notFound()
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10 space-y-6">
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          <Link href="/" className="underline underline-offset-4">
-            CortSeal
-          </Link>{" "}
-          / Seal
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {seal.sourceTitle ?? "CortSeal Monitor Seal"}
-        </h1>
-        <p className="text-muted-foreground">
-          Created <span className="font-medium text-foreground">{formatWhen(seal.createdAt)}</span>
-        </p>
-      </div>
+    <div className="mx-auto w-full max-w-6xl px-6 py-12 space-y-8">
+      <PageHeader
+        eyebrow={
+          <>
+            <Link href="/" className="underline underline-offset-4">
+              CortSeal
+            </Link>{" "}
+            / Seal
+          </>
+        }
+        title={seal.sourceTitle ?? "CortSeal Monitor Seal"}
+        description="Public proof page with verdict, evidence, and downloadable artifacts."
+        meta={
+          <>
+            Created{" "}
+            <span className="font-medium text-foreground">{formatWhen(seal.createdAt)}</span>
+          </>
+        }
+        actions={
+          <Button asChild variant="secondary">
+            <Link href="/directory">Back to directory</Link>
+          </Button>
+        }
+      />
 
       <Card className="p-5 space-y-3">
         <div className="flex flex-wrap items-center gap-2">

@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { PageHeader } from "@/components/layout/PageHeader"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -17,25 +18,24 @@ export default async function MonitorsPage() {
   const monitors = await listMonitors()
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+    <div className="mx-auto w-full max-w-6xl px-6 py-12 space-y-8">
+      <PageHeader
+        eyebrow={
+          <>
             <Link href="/" className="underline underline-offset-4">
               CortSeal
             </Link>{" "}
             / Monitors
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight">Monitors</h1>
-          <p className="text-muted-foreground">
-            Schedule RSS audits and router health checks. New feed items generate shareable seals.
-          </p>
-        </div>
-
-        <Button asChild variant="secondary">
-          <Link href="/monitors/new">New monitor</Link>
-        </Button>
-      </div>
+          </>
+        }
+        title="Monitors"
+        description="Schedule RSS audits and router health checks. New feed items generate shareable seals."
+        actions={
+          <Button asChild variant="secondary">
+            <Link href="/monitors/new">New monitor</Link>
+          </Button>
+        }
+      />
 
       {monitors.length === 0 ? (
         <Card className="p-6">
@@ -47,13 +47,13 @@ export default async function MonitorsPage() {
           </div>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {monitors.map((monitor) => {
             const locked =
               typeof monitor.lockedUntil === "number" && monitor.lockedUntil > Date.now()
 
             return (
-              <Card key={monitor._id} className="p-4">
+              <Card key={monitor._id} className="p-5">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
