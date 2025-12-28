@@ -79,7 +79,7 @@ export function SiteHeader() {
           isScrolled ? "bg-background/95 shadow-sm shadow-black/5" : "bg-background/80"
         )}
       >
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex w-full items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             <SiteLogo showTagline taglineClassName="hidden lg:block" priority />
             <span className="hidden items-center rounded-full border border-border/70 bg-card/70 px-2.5 py-0.5 text-[11px] text-muted-foreground sm:inline-flex">
@@ -138,7 +138,7 @@ export function SiteHeader() {
         {open ? (
           <div
             id="mobile-nav"
-            className="animate-rise border-t border-border/60 bg-background/95 px-6 py-4 shadow-sm shadow-black/5 md:hidden"
+            className="animate-rise border-t border-border/60 bg-background/95 px-4 py-4 shadow-sm shadow-black/5 sm:px-6 md:hidden"
           >
             <div className="grid gap-3">
               {navLinks.map((link) => (
