@@ -16,7 +16,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
   9. **Current page:** Terminal Tab C (Router) — run `curl -i http://127.0.0.1:5010/api/v1/status -H "Authorization: Bearer $CORTENSOR_API_KEY"` — wait for `HTTP/1.1 200`.
   10. **Verify on-screen:** You can see (a) Convex dev running, (b) IPFS daemon ready, (c) Router status is 200, and (d) Next.js is live on `http://localhost:3000`.
 - **Voiceover:**
-  > “To demo CortSeal end-to-end, I’m booting the whole local stack: Convex for persistence and background jobs, IPFS for evidence bundles, and the Cortensor Router for decentralized inference. The key check is Router status returning HTTP 200 and Next.js running on localhost — that means the network layer and the app are ready.”
+  > “To demo CortSeal end-to-end, I’m booting the whole local stack: Convex for persistence and background jobs, IPFS for evidence bundles, and the Cortensor Router for decentralized inference. The key check is Next.js running on localhost — that means the app is ready.”
 
 ## 2. Show the existing Cortensor session used by CortSeal (Session #173)
 - **URL:** https://dashboard-testnet0.cortensor.network
