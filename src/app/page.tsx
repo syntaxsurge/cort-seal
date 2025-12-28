@@ -59,21 +59,36 @@ const workflows = [
 
 export default function Home() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pb-20 pt-12">
-      <section className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-24 pt-12">
+      <section className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6 animate-rise">
-          <Badge variant="outline" className="w-fit border-border/60 bg-card/70">
-            Decentralized trust for creators
-          </Badge>
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge
+              variant="outline"
+              className="w-fit border-primary/30 bg-background/70 text-foreground"
+            >
+              Decentralized trust for creators
+            </Badge>
+            <span className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
+              Cortensor Router
+            </span>
+          </div>
           <h1 className="font-display text-balance text-4xl leading-tight md:text-6xl">
-            Proof-backed trust badges for creator claims and public sources.
+            <span className="bg-gradient-to-r from-primary via-indigo-500 to-accent bg-clip-text text-transparent">
+              Proof-ready seals
+            </span>{" "}
+            for creator claims and public sources.
           </h1>
           <p className="max-w-xl text-pretty text-lg text-muted-foreground">
             CortSeal extracts verifiable claims, runs redundant router checks (PoI), applies a
             PoUW-style rubric, and publishes shareable evidence bundles.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg">
+            <Button
+              asChild
+              size="lg"
+              className="bg-gradient-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
+            >
               <Link href="/try">Start a check</Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
@@ -84,47 +99,59 @@ export default function Home() {
             </Button>
           </div>
           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <Badge variant="secondary">PoI redundancy</Badge>
-            <Badge variant="secondary">PoUW scoring</Badge>
-            <Badge variant="secondary">Evidence bundles</Badge>
-            <Badge variant="secondary">Public proofs</Badge>
+            <Badge variant="secondary" className="border border-border/60">
+              PoI redundancy
+            </Badge>
+            <Badge variant="secondary" className="border border-border/60">
+              PoUW scoring
+            </Badge>
+            <Badge variant="secondary" className="border border-border/60">
+              Evidence bundles
+            </Badge>
+            <Badge variant="secondary" className="border border-border/60">
+              Public proofs
+            </Badge>
           </div>
         </div>
 
-        <Card className="surface-card border-border/60 bg-card/80 backdrop-blur animate-rise">
-          <CardHeader>
-            <CardTitle className="text-lg">Proof snapshot</CardTitle>
-            <CardDescription>What a finished seal delivers in one run.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">SUPPORTED · 92%</Badge>
-              <span className="text-xs text-muted-foreground">
-                Dispersion 0.12 · Runs 3x
-              </span>
-            </div>
-            <p className="text-muted-foreground">
-              Claim: Submission deadline is Jan 4, 2026. Evidence includes quotes, verdict
-              rationales, and deterministic checks.
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-border/60 bg-background/80 p-3">
-                <p className="text-xs text-muted-foreground">Proof bundle</p>
-                <p className="mt-1 font-medium">Download JSON</p>
+        <div className="relative animate-rise" style={{ animationDelay: "120ms" }}>
+          <div aria-hidden="true" className="pointer-events-none absolute -left-10 -top-12 h-32 w-32 rounded-full bg-primary/20 blur-2xl" />
+          <div aria-hidden="true" className="pointer-events-none absolute -bottom-10 right-0 h-28 w-28 rounded-full bg-accent/20 blur-2xl" />
+          <Card className="border-border/60 bg-card/80 backdrop-blur">
+            <CardHeader>
+              <CardTitle className="text-lg">Proof snapshot</CardTitle>
+              <CardDescription>What a finished seal delivers in one run.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline">SUPPORTED · 92%</Badge>
+                <span className="text-xs text-muted-foreground">
+                  Dispersion 0.12 · Runs 3x
+                </span>
               </div>
-              <div className="rounded-xl border border-border/60 bg-background/80 p-3">
-                <p className="text-xs text-muted-foreground">Badge + embed</p>
-                <p className="mt-1 font-medium">Public share assets</p>
+              <p className="text-muted-foreground">
+                Claim: Submission deadline is Jan 4, 2026. Evidence includes quotes, verdict
+                rationales, and deterministic checks.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-border/60 bg-background/80 p-3">
+                  <p className="text-xs text-muted-foreground">Proof bundle</p>
+                  <p className="mt-1 font-medium">Download JSON</p>
+                </div>
+                <div className="rounded-2xl border border-border/60 bg-background/80 p-3">
+                  <p className="text-xs text-muted-foreground">Badge + embed</p>
+                  <p className="mt-1 font-medium">Public share assets</p>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-              <span className="rounded-full border border-border/60 px-2 py-0.5">Consensus</span>
-              <span className="rounded-full border border-border/60 px-2 py-0.5">PoI</span>
-              <span className="rounded-full border border-border/60 px-2 py-0.5">PoUW</span>
-              <span className="rounded-full border border-border/60 px-2 py-0.5">Proof</span>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                <span className="rounded-full border border-border/60 px-2 py-0.5">Consensus</span>
+                <span className="rounded-full border border-border/60 px-2 py-0.5">PoI</span>
+                <span className="rounded-full border border-border/60 px-2 py-0.5">PoUW</span>
+                <span className="rounded-full border border-border/60 px-2 py-0.5">Proof</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </section>
 
       <section className="mt-20 space-y-6">
@@ -133,12 +160,12 @@ export default function Home() {
           <h2 className="font-display text-3xl">How CortSeal works</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
-          {steps.map((step) => (
-            <Card
-              key={step.title}
-              className="surface-card border-border/60 bg-card/80 backdrop-blur"
-            >
+          {steps.map((step, index) => (
+            <Card key={step.title} className="border-border/60 bg-card/80 backdrop-blur">
               <CardHeader>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                  Step 0{index + 1}
+                </p>
                 <CardTitle className="text-lg">{step.title}</CardTitle>
                 <CardDescription>{step.description}</CardDescription>
               </CardHeader>
@@ -161,10 +188,7 @@ export default function Home() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {proofSurfaces.map((surface) => (
-            <Card
-              key={surface.title}
-              className="surface-card border-border/60 bg-card/80 backdrop-blur"
-            >
+            <Card key={surface.title} className="border-border/60 bg-card/80 backdrop-blur">
               <CardHeader>
                 <CardTitle className="text-base">{surface.title}</CardTitle>
                 <CardDescription>{surface.description}</CardDescription>
@@ -192,10 +216,7 @@ export default function Home() {
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {workflows.map((flow) => (
-            <Card
-              key={flow.title}
-              className="surface-card border-border/60 bg-card/80 backdrop-blur"
-            >
+            <Card key={flow.title} className="border-border/60 bg-card/80 backdrop-blur">
               <CardHeader>
                 <CardTitle className="text-lg">{flow.title}</CardTitle>
                 <CardDescription>{flow.description}</CardDescription>
@@ -206,7 +227,7 @@ export default function Home() {
       </section>
 
       <section className="mt-20">
-        <Card className="surface-card border-border/60 bg-card/80 px-6 py-10 backdrop-blur">
+        <Card className="border-border/60 bg-card/80 px-6 py-10 backdrop-blur">
           <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
             <div className="space-y-3">
               <h2 className="font-display text-3xl">Ready to seal your first claim?</h2>
@@ -216,7 +237,11 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg">
+              <Button
+                asChild
+                size="lg"
+                className="bg-gradient-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
+              >
                 <Link href="/try">Run a draft check</Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
