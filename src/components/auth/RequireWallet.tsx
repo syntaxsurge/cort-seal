@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react";
 import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import { Card } from "@/components/ui/card";
+import { WalletConnectButton } from "@/components/auth/WalletConnectButton";
 
 export function RequireWallet({ children }: { children: ReactNode }) {
   const { isConnected } = useAccount();
@@ -21,7 +21,7 @@ export function RequireWallet({ children }: { children: ReactNode }) {
               CortSeal uses wallet identity to keep analyses, seals, and monitors scoped to you.
             </p>
           </div>
-          <ConnectButton />
+          <WalletConnectButton />
         </Card>
       </div>
     );

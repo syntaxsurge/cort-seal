@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-
 import { Button } from "@/components/ui/button";
+import { WalletConnectButton } from "@/components/auth/WalletConnectButton";
 import { SiteLogo } from "@/components/layout/SiteLogo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -106,7 +105,7 @@ export function SiteHeader() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <div className="hidden md:block">
-              <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
+              <WalletConnectButton />
             </div>
             <div className="md:hidden">
               <Button
@@ -143,7 +142,7 @@ export function SiteHeader() {
                 </Link>
                 ))}
               <div className="mt-2 pt-2">
-                <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
+                <WalletConnectButton />
               </div>
             </div>
           </div>

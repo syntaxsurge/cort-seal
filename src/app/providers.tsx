@@ -79,6 +79,7 @@ type EthereumProvider = EIP1193Provider & {
   isTokenPocket?: boolean;
   isTrust?: boolean;
   isTrustWallet?: boolean;
+  isUniswapWallet?: boolean;
   isWigwam?: boolean;
   isZeal?: boolean;
   isZerion?: boolean;
@@ -86,78 +87,52 @@ type EthereumProvider = EIP1193Provider & {
   __seif?: boolean;
 };
 
-function isMetaMaskProvider(ethereum?: EthereumProvider): boolean {
-  if (!ethereum?.isMetaMask) return false;
-  if (ethereum.isBraveWallet && !ethereum._events && !ethereum._state) return false;
-  if (ethereum.isApexWallet) return false;
-  if (ethereum.isAvalanche) return false;
-  if (ethereum.isBackpack) return false;
-  if (ethereum.isBifrost) return false;
-  if (ethereum.isBitKeep) return false;
-  if (ethereum.isBitski) return false;
-  if (ethereum.isBinance) return false;
-  if (ethereum.isBlockWallet) return false;
-  if (ethereum.isCoinbaseWallet) return false;
-  if (ethereum.isDawn) return false;
-  if (ethereum.isEnkrypt) return false;
-  if (ethereum.isExodus) return false;
-  if (ethereum.isFrame) return false;
-  if (ethereum.isFrontier) return false;
-  if (ethereum.isGamestop) return false;
-  if (ethereum.isHyperPay) return false;
-  if (ethereum.isImToken) return false;
-  if (ethereum.isKuCoinWallet) return false;
-  if (ethereum.isMathWallet) return false;
-  if (ethereum.isNestWallet) return false;
-  if (ethereum.isOkxWallet || ethereum.isOKExWallet) return false;
-  if (ethereum.isOneInchIOSWallet || ethereum.isOneInchAndroidWallet) return false;
-  if (ethereum.isOpera) return false;
-  if (ethereum.isPhantom) return false;
-  if (ethereum.isZilPay) return false;
-  if (ethereum.isPortal) return false;
-  if (ethereum.isRabby) return false;
-  if (ethereum.isRainbow) return false;
-  if (ethereum.isStatus) return false;
-  if (ethereum.isTalisman) return false;
-  if (ethereum.isTally) return false;
-  if (ethereum.isTokenPocket) return false;
-  if (ethereum.isTokenary) return false;
-  if (ethereum.isTrust || ethereum.isTrustWallet) return false;
-  if (ethereum.isCTRL) return false;
-  if (ethereum.isZeal) return false;
-  if (ethereum.isCoin98) return false;
-  if (ethereum.isMEWwallet) return false;
-  if (ethereum.isSafeheron) return false;
-  if (ethereum.isSafePal) return false;
-  if (ethereum.isWigwam) return false;
-  if (ethereum.isZerion) return false;
-  if (ethereum.__seif) return false;
-  return true;
+function isMetaMaskProvider(provider?: EthereumProvider): boolean {
+  if (!provider?.isMetaMask) return false;
+  if (provider.isBraveWallet && !provider._events && !provider._state) return false;
+  const flags: Array<keyof EthereumProvider> = [
+    "isApexWallet",
+    "isAvalanche",
+    "isBitKeep",
+    "isBlockWallet",
+    "isKuCoinWallet",
+    "isMathWallet",
+    "isOkxWallet",
+    "isOKExWallet",
+    "isOneInchIOSWallet",
+    "isOneInchAndroidWallet",
+    "isOpera",
+    "isPhantom",
+    "isPortal",
+    "isRabby",
+    "isTokenPocket",
+    "isTokenary",
+    "isUniswapWallet",
+    "isZerion",
+  ];
+  return flags.every((flag) => !provider[flag]);
 }
 
 function getMetaMaskProvider(): EthereumProvider | undefined {
   if (typeof window === "undefined") return undefined;
   const ethereum = (window as Window & { ethereum?: EthereumProvider }).ethereum;
   if (!ethereum) return undefined;
-  if (isMetaMaskProvider(ethereum)) return ethereum;
   const providers: EthereumProvider[] = Array.isArray(ethereum.providers)
     ? ethereum.providers
     : [];
-  return providers.find((provider) => isMetaMaskProvider(provider));
+  const candidates = providers.length ? providers : [ethereum];
+  return candidates.find((provider) => isMetaMaskProvider(provider));
 }
 
 const metaMaskInjectedWallet = (params: Parameters<typeof metaMaskWallet>[0]) => {
   const baseWallet = metaMaskWallet(params);
+  const isMetaMaskInstalled = typeof window !== "undefined" ? Boolean(getMetaMaskProvider()) : false;
   return {
     ...baseWallet,
-    installed: typeof window !== "undefined" ? Boolean(getMetaMaskProvider()) : baseWallet.installed,
+    installed: isMetaMaskInstalled ? true : baseWallet.installed,
     createConnector: (walletDetails: Parameters<typeof baseWallet.createConnector>[0]) => {
-      const hasMetaMask = Boolean(getMetaMaskProvider());
-      if (!hasMetaMask) {
-        return baseWallet.createConnector(walletDetails);
-      }
       return createConnector((config) => ({
-        ...injected({ target: "metaMask" })(config),
+        ...injected({ target: "metaMask", unstable_shimAsyncInject: true })(config),
         ...walletDetails,
       }));
     },
