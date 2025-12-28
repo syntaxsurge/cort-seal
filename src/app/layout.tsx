@@ -38,7 +38,13 @@ export default function RootLayout({
         className={`${bodyFont.variable} ${displayFont.variable} ${monoFont.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="relative flex min-h-dvh flex-col">
+          <div className="relative grid min-h-dvh grid-rows-[auto,1fr,auto]">
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-foreground focus:shadow-lg"
+            >
+              Skip to content
+            </a>
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
@@ -48,7 +54,9 @@ export default function RootLayout({
               <div className="absolute -bottom-24 left-[18%] h-88 w-88 rounded-full bg-secondary/40 blur-3xl" />
             </div>
             <SiteHeader />
-            <main className="relative z-10 flex-1">{children}</main>
+            <main id="main-content" className="relative z-10">
+              {children}
+            </main>
             <SiteFooter />
           </div>
         </ThemeProvider>

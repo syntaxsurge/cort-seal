@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,11 +25,31 @@ function isActive(pathname: string, href: string) {
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 8);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (pathname.startsWith("/embed")) return null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full border-b border-border/60 backdrop-blur transition",
+        isScrolled ? "bg-background/95 shadow-sm shadow-black/5" : "bg-background/80"
+      )}
+    >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-3">
           <SiteLogo showTagline taglineClassName="hidden lg:block" priority />
@@ -38,14 +58,14 @@ export function SiteHeader() {
           </span>
         </div>
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-3 md:flex" aria-label="Primary">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
               className={cn(
-                "relative text-sm font-medium text-muted-foreground transition hover:text-foreground after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-primary/70 after:transition-transform",
+                "relative rounded-md px-2 py-1 text-sm font-medium text-muted-foreground transition hover:text-foreground after:absolute after:-bottom-1 after:left-2 after:right-2 after:h-0.5 after:origin-left after:scale-x-0 after:bg-primary/70 after:transition-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring/60",
                 isActive(pathname, link.href) && "text-foreground after:scale-x-100"
               )}
             >
@@ -84,7 +104,10 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <div id="mobile-nav" className="border-t border-border/60 bg-background/90 px-6 py-4 md:hidden">
+        <div
+          id="mobile-nav"
+          className="animate-rise border-t border-border/60 bg-background/95 px-6 py-4 shadow-sm shadow-black/5 md:hidden"
+        >
           <div className="grid gap-3">
             {navLinks.map((link) => (
               <Link
@@ -92,7 +115,7 @@ export function SiteHeader() {
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "text-sm font-medium text-muted-foreground transition hover:text-foreground",
+                  "rounded-md px-2 py-1 text-sm font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring/60",
                   isActive(pathname, link.href) && "text-foreground"
                 )}
               >
@@ -105,7 +128,11 @@ export function SiteHeader() {
                   Mint a seal
                 </Link>
               </Button>
-              <Button asChild size="sm">
+              <Button
+                asChild
+                size="sm"
+                className="bg-linear-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
+              >
                 <Link href="/try" onClick={() => setOpen(false)}>
                   Start a check
                 </Link>
