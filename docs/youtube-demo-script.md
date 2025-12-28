@@ -38,26 +38,26 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** `http://localhost:3000/try` showing a draft input form; then it redirects to `/try/results/[id]` with a claims table showing agreement/dispersion and rubric scoring.
 - **Steps:**
   1. **Current page:** Landing page — confirm the address bar shows `http://localhost:3000/`.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/try` → confirm the address bar shows `/try`.
+  2. **Navigate:** Click “Try” in the header navigation (or open the Menu and tap “Try” on mobile) → confirm the address bar shows `/try`.
   3. **Current page:** `/try` — confirm you see a draft input area (textarea/editor) and a primary submit button.
   4. **Enter values:**
-     - Draft Content = `I’m joining Cortensor Hackathon #3.\nThe submission deadline is Sun, Jan 4, 2026.\nProjects must have a working public demo during the hackathon to qualify.\nHackathon #3 emphasizes agentic apps, PoI-style redundant inference, and PoUW-style validator scoring.\nCortSeal will publish evidence-backed seals so creators can share verification artifacts.`
-  5. **Action:** Click “Run Claim Check” — wait for a loading state and an automatic redirect.
+     - Prompt = `I’m joining Cortensor Hackathon #3.\nThe submission deadline is Sun, Jan 4, 2026.\nProjects must have a working public demo during the hackathon to qualify.\nHackathon #3 emphasizes agentic apps, PoI-style redundant inference, and PoUW-style validator scoring.\nCortSeal will publish evidence-backed seals so creators can share verification artifacts.`
+  5. **Action:** Click “Run CortSeal Check” — wait for a loading state and an automatic redirect.
   6. **Verify on-screen:** The address bar now shows `http://localhost:3000/try/results/` followed by an ID, and you see a claims table with multiple extracted claims plus per-claim redundancy outputs (agreement/dispersion).
 - **Voiceover:**
-  > “This is the creator workflow: I paste a draft, click Run Claim Check, and CortSeal automatically extracts claims. Under the hood it runs multiple redundant verifier calls — PoI-style — so we don’t just get one model’s opinion. The results page shows what was extracted and how consistent the redundant runs were, which is exactly the trust signal judges want to see.”
+  > “This is the creator workflow: I paste a draft, click Run CortSeal Check, and CortSeal automatically extracts claims. Under the hood it runs multiple redundant verifier calls — PoI-style — so we don’t just get one model’s opinion. The results page shows what was extracted and how consistent the redundant runs were, which is exactly the trust signal judges want to see.”
 
 ## 4. Evidence + Proof artifacts: /api/analyses/[id]/evidence → /api/analyses/[id]/proof → /share/[id] → /api/proofs/[id]
 - **URL:** /try/results/[id]
-- **Shot:** The results page in one tab; then new tabs showing evidence JSON, proof generation JSON, the public share page, and the immutable proof JSON download.
+- **Shot:** The results page in one tab; then new tabs showing evidence JSON, the public share page, and the immutable proof JSON download.
 - **Steps:**
   1. **Current page:** `/try/results/[ANALYSIS_ID]` — confirm the address bar includes `/try/results/`.
   2. **Action:** Copy the analysis ID from the address bar (the last path segment) — treat it as `[ANALYSIS_ID]`.
-  3. **Navigate:** Open URL directly in a new tab: `http://localhost:3000/api/analyses/[ANALYSIS_ID]/evidence` → confirm the browser shows a JSON response.
+  3. **Action:** Click “Download evidence” in the Output card → confirm the browser opens `/api/analyses/[ANALYSIS_ID]/evidence` as JSON.
   4. **Current page:** Evidence JSON — confirm you see a top-level `analysisId` and a structured `result` payload.
-  5. **Navigate:** Open URL directly in a new tab: `http://localhost:3000/api/analyses/[ANALYSIS_ID]/proof` → confirm the response includes a public proof share ID (copy it as `[PROOF_SHARE_ID]`).
-  6. **Navigate:** Open URL directly: `http://localhost:3000/share/[PROOF_SHARE_ID]` → confirm the address bar shows `/share/` and the proof bundle renders in a readable UI.
-  7. **Navigate:** Open URL directly: `http://localhost:3000/api/proofs/[PROOF_SHARE_ID]` → confirm a full immutable proof bundle JSON renders/downloads.
+  5. **Action:** Back on the results tab, click “Generate proof link” (this calls `/api/analyses/[ANALYSIS_ID]/proof`) — wait for the “Open share page” button to appear, then copy the share ID as `[PROOF_SHARE_ID]`.
+  6. **Navigate:** Click “Open share page” → confirm the address bar shows `/share/` and the proof bundle renders in a readable UI.
+  7. **Action:** On the share page, click “Download evidence” → confirm a full immutable proof bundle JSON renders/downloads from `/api/proofs/[PROOF_SHARE_ID]`.
   8. **Verify on-screen:** You have (a) evidence JSON, (b) a generated proof share ID, (c) a public share page, and (d) an immutable proof JSON payload that can be archived and re-verified.
 - **Voiceover:**
   > “This is where CortSeal becomes more than a UI — it becomes a trust primitive. For every analysis, we can export a raw evidence snapshot, then generate a public proof bundle with deterministic checks. The share page is what creators link publicly, and the JSON endpoints are what developers integrate — a complete validation artifact pipeline aligned with PoI and PoUW.”
@@ -67,11 +67,13 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** `http://localhost:3000/audit` showing a URL audit form; then it redirects to `/audit/results/[id]` with extracted claims and evidence quotes from the page.
 - **Steps:**
   1. **Current page:** Browser tab with localhost — confirm the address bar includes `http://localhost:3000/`.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/audit` → confirm the address bar shows `/audit`.
+  2. **Navigate:** Click “Audit” in the header navigation → confirm the address bar shows `/audit`.
   3. **Current page:** `/audit` — confirm you see a URL input field and a primary submit button.
   4. **Enter values:**
-     - URL = `https://docs.cortensor.network/community-and-ecosystem/hackathon/hackathon-3`
-  5. **Action:** Click “Audit URL” — wait for a loading state and redirect to a results page.
+     - Source URL = `https://docs.cortensor.network/community-and-ecosystem/hackathon/hackathon-3` (pre-filled)
+     - Max claims (1–20) = 12 (leave default)
+     - Redundancy (2–5) = 3 (leave default)
+  5. **Action:** Click “Run URL Audit” — wait for a loading state and redirect to a results page.
   6. **Verify on-screen:** The address bar shows `http://localhost:3000/audit/results/` followed by an ID, and you see extracted claims alongside evidence quotes/snippets sourced from the page plus agreement/dispersion and rubric scoring.
 - **Voiceover:**
   > “Now I’m auditing a real, public source: the official Hackathon #3 page. CortSeal fetches readable text safely, extracts claims, and validates them against the source with redundant runs. The results aren’t just text — they include evidence quotes and the stability of agreement across runs, which is exactly how you build a public-good verifier.”
@@ -81,13 +83,13 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** `http://localhost:3000/validate` with URL + claim fields; then the public seal page `/seal/[publicId]` shows verdict + evidence.
 - **Steps:**
   1. **Current page:** Browser on localhost — confirm the address bar starts with `http://localhost:3000`.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/validate` → confirm the address bar shows `/validate`.
+  2. **Navigate:** Click “Validate” in the header navigation → confirm the address bar shows `/validate`.
   3. **Current page:** `/validate` — confirm you see fields for a source URL and a claim text.
   4. **Enter values:**
      - URL = `https://docs.cortensor.network/community-and-ecosystem/hackathon/hackathon-3`
      - Claim = `Submission deadline: Sun, Jan 4, 2026`
-  5. **Action:** Click “Validate & Mint Seal” — wait for a success state that reveals a public seal ID (copy it as `[SEAL_PUBLIC_ID]`) or redirects you automatically.
-  6. **Navigate:** Open URL directly: `http://localhost:3000/seal/[SEAL_PUBLIC_ID]` → confirm the address bar shows `/seal/`.
+  5. **Action:** Click “Validate” — wait for the result card that shows a seal link and public ID (copy it as `[SEAL_PUBLIC_ID]`).
+  6. **Navigate:** Click the seal link in the result card → confirm the address bar shows `/seal/`.
   7. **Verify on-screen:** You see a public seal page with a clear verdict indicator plus an evidence section tying the claim back to the source.
 - **Voiceover:**
   > “This is the simplest ‘trust-as-a-service’ flow. I provide one claim and one source URL, CortSeal runs redundant validation, applies a rubric score, and then mints a public seal with a stable ID. The seal page is what creators share — it’s easy to read, but it’s backed by machine-verifiable artifacts.”
@@ -97,11 +99,11 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** `http://localhost:3000/directory` listing public seals; then tabs showing the embed card, the SVG badge, and the seal JSON bundle for the same public ID.
 - **Steps:**
   1. **Current page:** Public seal page — confirm the address bar shows `/seal/[SEAL_PUBLIC_ID]`.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/directory` → confirm the address bar shows `/directory`.
+  2. **Navigate:** Click “Directory” in the header navigation → confirm the address bar shows `/directory`.
   3. **Current page:** `/directory` — confirm you see a list of recent public seals.
-  4. **Navigate:** Open URL directly in a new tab: `http://localhost:3000/embed/[SEAL_PUBLIC_ID]` → confirm you see an iframe-friendly embed card.
-  5. **Navigate:** Open URL directly in a new tab: `http://localhost:3000/api/badge/[SEAL_PUBLIC_ID].svg` → confirm an SVG badge renders in the browser.
-  6. **Navigate:** Open URL directly in a new tab: `http://localhost:3000/api/seals/[SEAL_PUBLIC_ID]` → confirm a JSON seal bundle downloads/renders.
+  4. **Navigate:** In the seal card that matches `[SEAL_PUBLIC_ID]`, click “Embed” (open in a new tab) → confirm you see an iframe-friendly embed card.
+  5. **Navigate:** In the same seal card, click “Badge” (open in a new tab) → confirm an SVG badge renders in the browser.
+  6. **Navigate:** In the same seal card, click “JSON” (open in a new tab) → confirm a JSON seal bundle downloads/renders.
   7. **Verify on-screen:** You’ve demonstrated (a) a catalog/directory, (b) an embed surface, (c) a badge surface, and (d) a developer-consumable JSON bundle for the same seal.
 - **Voiceover:**
   > “This is the growth loop: directory for discoverability, embeds and badges for creators to distribute trust everywhere, and a clean JSON bundle for developers. It’s aligned with the hackathon’s app catalog and developer tooling tracks — and it turns verification into something that can actually spread.”
@@ -111,13 +113,15 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** Monitors list page, then the create monitor page, then a monitor detail page showing run history and any generated artifacts.
 - **Steps:**
   1. **Current page:** Browser tab on localhost — confirm you can see `http://localhost:3000` in the address bar.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/monitors` → confirm the address bar shows `/monitors`.
+  2. **Navigate:** Click “Monitors” in the header navigation → confirm the address bar shows `/monitors`.
   3. **Current page:** `/monitors` — confirm you see a monitors list (even if empty) and a way to create a monitor.
-  4. **Navigate:** Open URL directly: `http://localhost:3000/monitors/new` → confirm the address bar shows `/monitors/new` and you see a create monitor form.
+  4. **Navigate:** Click “New monitor” (or “Create your first monitor” if the list is empty) → confirm the address bar shows `/monitors/new` and you see a create monitor form.
   5. **Enter values:**
-     - Monitor Name = `community-projects-commits`
-     - RSS/Atom Feed URL = `https://github.com/cortensor/community-projects/commits/main.atom`
-  6. **Action:** Click “Create Monitor” — wait for a redirect to `/monitors/[MONITOR_ID]` or a success confirmation.
+     - Name = `community-projects-commits`
+     - Kind = `RSS feed` (leave default)
+     - Interval (minutes) = 30 (leave default)
+     - Feed URL = `https://github.com/cortensor/community-projects/commits/main.atom`
+  6. **Action:** Click “Create monitor” — wait for a redirect to `/monitors/[MONITOR_ID]` or a success confirmation.
   7. **Verify on-screen:** The address bar shows `/monitors/` followed by an ID, and you can see a monitor detail view with a run history area and/or recent artifacts section.
 - **Voiceover:**
   > “This is the agentic part of CortSeal: monitors run automatically in the background. Instead of a one-off audit, you can watch a feed and continuously produce trust artifacts over time — with optional Discord alerts. That directly maps to the hackathon’s agentic applications and infra observability themes.”
@@ -140,7 +144,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** `http://localhost:3000/directory` showing your latest seals; you briefly open one seal page and show the badge/embed/proof endpoints exist.
 - **Steps:**
   1. **Current page:** Browser on `http://localhost:3000/directory` — confirm the directory lists at least one public seal entry (including `[SEAL_PUBLIC_ID]`).
-  2. **Verify final state:** Open `http://localhost:3000/seal/[SEAL_PUBLIC_ID]` in a new tab and confirm you can also reach `http://localhost:3000/api/badge/[SEAL_PUBLIC_ID].svg`, `http://localhost:3000/embed/[SEAL_PUBLIC_ID]`, and `http://localhost:3000/api/seals/[SEAL_PUBLIC_ID]` without errors.
+  2. **Verify final state:** Click “View” on the seal card for `[SEAL_PUBLIC_ID]` to open `/seal/[SEAL_PUBLIC_ID]` in a new tab, then use the “Download JSON”, “SVG badge”, and “Embed” buttons to confirm each endpoint loads without errors.
 - **Voiceover:**
   > “In one flow, we proved CortSeal’s full user journey: draft checks, source audits, single-claim validation, shareable public seals, and downloadable proof artifacts — plus agentic monitors and a developer-ready OpenAPI surface. This is exactly aligned with Cortensor Hackathon #3: agentic apps, PoI redundancy, PoUW scoring, attestations, and public-good endpoints. Try it at [DEMO_URL].”
 
@@ -149,7 +153,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Shot:** `http://localhost:3000/` in the browser; a clean landing experience describing audits, trust seals, proofs, and public endpoints.
 - **Steps:**
   1. **Current page:** Browser — confirm you’re not currently on the Cortensor Dashboard tab.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/` → confirm the address bar shows `http://localhost:3000/`.
+  2. **Navigate:** Click the CortSeal logo in the header → confirm the address bar shows `http://localhost:3000/`.
   3. **Current page:** Landing page — confirm you can see the CortSeal branding and a clear “what this does” section.
   4. **Action:** Scroll the page slowly — pause when you see sections describing (a) Draft audits, (b) URL audits, (c) Claim validation + seals, (d) Monitors, and (e) Public API.
   5. **Action:** Scroll back to the top — pause on the primary call-to-action area.
