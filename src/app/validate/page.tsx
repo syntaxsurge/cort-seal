@@ -27,7 +27,7 @@ export default function ValidatePage() {
               <Link href="/try">Check a draft</Link>
             </Button>
             <Button asChild>
-              <Link href="/directory">Browse seals</Link>
+              <Link href="/directory">Open library</Link>
             </Button>
           </>
         }

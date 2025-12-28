@@ -360,7 +360,7 @@ CortSeal is a Next.js (App Router) web app that audits creator drafts, public UR
 - `/audit` — audit a public URL; fetches readable text, extracts claims, runs redundant validators, and stores an Analysis
 - `/audit/results/[id]` — render a stored URL audit result by ID (claims + dispersion + evidence quotes + proof link generator)
 - `/validate` — validate a single claim against a public URL and mint a shareable Seal
-- `/directory` — list recent public Seals (links + badge + embed)
+- `/directory` — artifacts library for analyses, proofs, seals, and monitors with links to results, share pages, badges, and embeds
 - `/monitors` — list and manage RSS/router monitors (creates scheduled checks + seal artifacts)
 - `/monitors/new` — create a new monitor
 - `/monitors/[id]` — monitor detail page (recent seals + run history)
@@ -390,6 +390,7 @@ CortSeal is a Next.js (App Router) web app that audits creator drafts, public UR
 - Proof bundle generation lives in `src/features/cortseal/services/proofs.ts` (wraps evidence + deterministic checks) and is exposed via `src/app/api/analyses/[id]/proof/route.ts`, `src/app/api/proofs/[id]/route.ts`, and `src/app/share/[id]/page.tsx`.
 - Monitor scheduling runs in Convex via `convex/crons.ts` and `convex/monitors.ts` (RSS ingestion + router health checks + optional Discord alerts) and stores run history in `monitorRuns` plus seal artifacts in `seals`.
 - Seal rendering and downloads use `src/app/monitors/**`, `src/app/seal/[publicId]/page.tsx`, `src/app/embed/[publicId]/page.tsx`, `src/app/api/seals/[publicId]/route.ts`, `src/app/api/badge/[publicId].svg/route.ts`, plus data access helpers in `src/features/cortseal/services/monitors.ts` and `src/features/cortseal/services/seals.ts`.
-- Convex data model lives in `convex/schema.ts`; mutations/queries live in `convex/analyses.ts`, `convex/proofs.ts`, `convex/monitors.ts`, `convex/seals.ts`, and `convex/rateLimit.ts`.
+- The artifacts library in `/directory` aggregates analyses, proofs, seals, and monitors via `convex/directory.ts` and `src/features/cortseal/services/directory.ts`.
+- Convex data model lives in `convex/schema.ts`; mutations/queries live in `convex/analyses.ts`, `convex/proofs.ts`, `convex/monitors.ts`, `convex/seals.ts`, `convex/directory.ts`, and `convex/rateLimit.ts`.
 - Next.js server code talks to Convex via `src/lib/db/convex/httpClient.ts` (HTTP client using `NEXT_PUBLIC_CONVEX_URL`).
 - Shared UI primitives are provided by `shadcn/ui` in `src/components/ui/**`.

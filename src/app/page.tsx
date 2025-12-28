@@ -78,8 +78,8 @@ const coreRoutes = [
     icon: BadgeCheck,
   },
   {
-    title: "Seal directory",
-    description: "Browse public seals, badges, and embeds.",
+    title: "Artifacts library",
+    description: "Browse analyses, proofs, seals, and monitors.",
     href: "/directory",
     path: "/directory",
     icon: ShieldCheck,
@@ -138,7 +138,7 @@ const routeGroups: Array<{
         description: "Verdict view with evidence and share tools.",
         path: "/seal/[publicId]",
         href: "/directory",
-        linkLabel: "Open Directory",
+        linkLabel: "Open Library",
         icon: BadgeCheck,
       },
       {
@@ -146,7 +146,7 @@ const routeGroups: Array<{
         description: "Iframe-friendly badge card for embeds.",
         path: "/embed/[publicId]",
         href: "/directory",
-        linkLabel: "Open Directory",
+        linkLabel: "Open Library",
         icon: Link2,
       },
       {
@@ -447,7 +447,7 @@ export default function Home() {
                 <Link href="/audit">Audit a URL</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/directory">Explore seals</Link>
+                <Link href="/directory">Open library</Link>
               </Button>
             </div>
           </div>
