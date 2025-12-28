@@ -49,6 +49,7 @@
 
 :root {
   --radius: 1rem;
+  --site-header-height: 72px;
   --background: oklch(0.985 0.01 260);
   --foreground: oklch(0.21 0.04 270);
   --card: oklch(0.99 0.01 260);

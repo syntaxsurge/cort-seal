@@ -54,7 +54,7 @@ export default function RootLayout({
               <div className="absolute -bottom-24 left-[18%] h-88 w-88 rounded-full bg-secondary/40 blur-3xl" />
             </div>
             <SiteHeader />
-            <main id="main-content" className="relative z-10">
+            <main id="main-content" className="relative z-10 scroll-mt-[var(--site-header-height)]">
               {children}
             </main>
             <SiteFooter />
