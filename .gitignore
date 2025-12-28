@@ -30,6 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 *.log
+*.pid
+system_info.json
 
 # env files (can opt-in for committing if needed)
 .env*
