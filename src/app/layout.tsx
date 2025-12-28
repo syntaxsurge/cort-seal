@@ -39,10 +39,13 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <div className="relative flex min-h-dvh flex-col">
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-              <div className="absolute left-[-10%] top-[-20%] h-[28rem] w-[28rem] rounded-full bg-primary/20 blur-3xl animate-float" />
-              <div className="absolute right-[-15%] top-[5%] h-[26rem] w-[26rem] rounded-full bg-accent/25 blur-3xl animate-float" />
-              <div className="absolute bottom-[-25%] left-[20%] h-[24rem] w-[24rem] rounded-full bg-secondary/40 blur-3xl" />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+            >
+              <div className="absolute -left-24 -top-24 h-[26rem] w-[26rem] rounded-full bg-primary/20 blur-3xl animate-float" />
+              <div className="absolute -right-24 top-12 h-[24rem] w-[24rem] rounded-full bg-accent/25 blur-3xl animate-float" />
+              <div className="absolute -bottom-24 left-[18%] h-[22rem] w-[22rem] rounded-full bg-secondary/40 blur-3xl" />
             </div>
             <SiteHeader />
             <main className="relative z-10 flex-1">{children}</main>
