@@ -67,7 +67,7 @@ export default async function SealPage({ params }: PageProps) {
         }
         actions={
           <Button asChild variant="secondary">
-            <Link href="/directory">Back to library</Link>
+            <Link href="/directory">Back to directory</Link>
           </Button>
         }
       />

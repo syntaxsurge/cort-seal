@@ -8,6 +8,7 @@ import {
 import { v } from "convex/values";
 
 import { assertSafeExternalUrl } from "./lib/monitorsShared";
+import { normalizeOwnerAddress } from "./lib/ownerAddress";
 
 const MIN_MONITOR_NAME_LEN = 3;
 const MAX_MONITOR_NAME_LEN = 80;
@@ -32,6 +33,19 @@ export const list = queryGeneric({
   },
 });
 
+export const listByOwner = queryGeneric({
+  args: { ownerAddress: v.string(), limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const ownerAddress = normalizeOwnerAddress(args.ownerAddress);
+    const limit = Math.max(1, Math.min(args.limit ?? 40, 200));
+    return await ctx.db
+      .query("monitors")
+      .withIndex("by_owner_createdAt", (q) => q.eq("ownerAddress", ownerAddress))
+      .order("desc")
+      .take(limit);
+  },
+});
+
 export const get = queryGeneric({
   args: { id: v.id("monitors") },
   handler: async (ctx, args) => {
@@ -53,6 +67,7 @@ export const listRuns = queryGeneric({
 
 export const create = mutationGeneric({
   args: {
+    ownerAddress: v.optional(v.string()),
     name: v.string(),
     kind: v.union(v.literal("rss"), v.literal("router")),
     intervalMinutes: v.number(),
@@ -61,6 +76,7 @@ export const create = mutationGeneric({
     minMinerCount: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const ownerAddress = normalizeOwnerAddress(args.ownerAddress);
     const name = args.name.trim();
     if (name.length < MIN_MONITOR_NAME_LEN || name.length > MAX_MONITOR_NAME_LEN) {
       throw new Error(`name must be between ${MIN_MONITOR_NAME_LEN} and ${MAX_MONITOR_NAME_LEN}.`);
@@ -86,6 +102,7 @@ export const create = mutationGeneric({
     }
 
     const monitorId = await ctx.db.insert("monitors", {
+      ownerAddress,
       name,
       kind: args.kind,
       enabled: true,
@@ -187,7 +204,10 @@ export const _getInternal = internalQueryGeneric({
 export const _createRun = internalMutationGeneric({
   args: { monitorId: v.id("monitors"), startedAt: v.number() },
   handler: async (ctx, args) => {
+    const monitor = await ctx.db.get(args.monitorId);
+    if (!monitor) throw new Error("Monitor not found.");
     return await ctx.db.insert("monitorRuns", {
+      ownerAddress: monitor.ownerAddress,
       monitorId: args.monitorId,
       startedAt: args.startedAt,
       status: "success",

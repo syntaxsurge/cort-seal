@@ -1,6 +1,8 @@
 import { internalMutationGeneric, mutationGeneric, queryGeneric } from "convex/server";
 import { v } from "convex/values";
 
+import { normalizeOwnerAddress } from "./lib/ownerAddress";
+
 const MIN_EXCERPT_CHARS = 1;
 const MAX_EXCERPT_CHARS = 6000;
 const MIN_CLAIM_CHARS = 8;
@@ -191,6 +193,7 @@ export const listByMonitor = queryGeneric({
 export const ingestFromApi = mutationGeneric({
   args: {
     token: v.string(),
+    ownerAddress: v.optional(v.string()),
     claim: v.optional(v.string()),
     sourceUrl: v.string(),
     sourceTitle: v.optional(v.string()),
@@ -226,6 +229,8 @@ export const ingestFromApi = mutationGeneric({
       throw new Error("Unauthorized: invalid ingest token.");
     }
 
+    const ownerAddress = normalizeOwnerAddress(args.ownerAddress);
+
     const normalized = normalizeSealFields({
       claim: args.claim,
       sourceExcerpt: args.sourceExcerpt,
@@ -238,6 +243,7 @@ export const ingestFromApi = mutationGeneric({
     const publicId = await generateUniquePublicId(ctx);
 
     const sealId = await ctx.db.insert("seals", {
+      ownerAddress,
       publicId,
       monitorId: undefined,
       feedItemId: undefined,
@@ -292,6 +298,9 @@ export const _upsertFromMonitor = internalMutationGeneric({
     createdAt: v.number(),
   },
   handler: async (ctx, args) => {
+    const monitor = await ctx.db.get(args.monitorId);
+    if (!monitor) throw new Error("Monitor not found.");
+
     if (args.feedItemId) {
       const existing = await ctx.db
         .query("seals")
@@ -303,7 +312,10 @@ export const _upsertFromMonitor = internalMutationGeneric({
       if (existing) {
         if (existing.publicId) return existing.publicId;
         const publicId = await generateUniquePublicId(ctx);
-        await ctx.db.patch(existing._id, { publicId });
+        await ctx.db.patch(existing._id, {
+          publicId,
+          ownerAddress: existing.ownerAddress ?? monitor.ownerAddress,
+        });
         return publicId;
       }
     }
@@ -320,6 +332,7 @@ export const _upsertFromMonitor = internalMutationGeneric({
     const publicId = await generateUniquePublicId(ctx);
 
     await ctx.db.insert("seals", {
+      ownerAddress: monitor.ownerAddress,
       publicId,
       monitorId: args.monitorId,
       feedItemId: args.feedItemId,

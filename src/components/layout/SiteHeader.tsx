@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import { Button } from "@/components/ui/button";
 import { SiteLogo } from "@/components/layout/SiteLogo";
@@ -14,6 +15,7 @@ const navLinks = [
   { href: "/audit", label: "Audit" },
   { href: "/validate", label: "Validate" },
   { href: "/directory", label: "Directory" },
+  { href: "/library", label: "Library" },
   { href: "/monitors", label: "Monitors" },
 ];
 
@@ -115,6 +117,9 @@ export function SiteHeader() {
               </Button>
             </div>
             <ThemeToggle />
+            <div className="hidden md:block">
+              <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
+            </div>
             <div className="md:hidden">
               <Button
                 type="button"
@@ -148,7 +153,7 @@ export function SiteHeader() {
                 >
                   {link.label}
                 </Link>
-              ))}
+                ))}
               <div className="mt-2 flex flex-col gap-2">
                 <Button asChild variant="secondary" size="sm">
                   <Link href="/validate" onClick={() => setOpen(false)}>
@@ -164,6 +169,9 @@ export function SiteHeader() {
                     Start a check
                   </Link>
                 </Button>
+                <div className="pt-2">
+                  <ConnectButton showBalance={false} chainStatus="icon" accountStatus="address" />
+                </div>
               </div>
             </div>
           </div>

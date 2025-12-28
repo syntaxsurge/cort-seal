@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { WalletAddressHiddenInput } from "@/components/auth/WalletAddressHiddenInput";
 
 import { runTry, type RunTryState } from "./actions";
 
@@ -34,6 +35,7 @@ export function TryForm() {
 
   return (
     <form action={formAction} className="space-y-4">
+      <WalletAddressHiddenInput />
       <div className="space-y-2">
         <Label htmlFor="prompt">Prompt</Label>
         <Textarea

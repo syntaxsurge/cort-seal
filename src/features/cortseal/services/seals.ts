@@ -35,6 +35,7 @@ export type SealRun = z.infer<typeof sealRunSchema>;
 export const sealDocSchema = z
   .object({
     _id: z.string().min(1),
+    ownerAddress: z.string().optional(),
     publicId: publicIdSchema,
     monitorId: z.string().optional(),
     feedItemId: z.string().optional(),

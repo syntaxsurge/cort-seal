@@ -9,6 +9,7 @@ import { getServerEnv } from "@/lib/env/server";
 import { fetchReadableText } from "@/lib/fetchers/readableText";
 import { assertSafeRemoteUrl } from "@/lib/security/safeUrl";
 import { runSourceAudit } from "@/features/cortseal/services/sourceAudit";
+import { normalizeWalletAddress } from "@/lib/wallet/address";
 
 export type RunAuditState =
   | { ok: true; analysisId: string }
@@ -18,6 +19,7 @@ const runAuditSchema = z.object({
   url: z.string().trim().url(),
   maxClaims: z.coerce.number().int().min(1).max(20).default(12),
   runsPerClaim: z.coerce.number().int().min(2).max(5).default(3),
+  ownerAddress: z.string().optional(),
 });
 
 function formatUnknownError(err: unknown): string {
@@ -38,12 +40,18 @@ export async function runAudit(
     url: formData.get("url"),
     maxClaims: formData.get("maxClaims"),
     runsPerClaim: formData.get("runsPerClaim"),
+    ownerAddress: formData.get("ownerAddress"),
   });
 
   if (!parsedInput.success) {
     const message =
       parsedInput.error.issues[0]?.message ?? "Invalid input. Please try again.";
     return { ok: false, error: message };
+  }
+
+  const ownerAddress = normalizeWalletAddress(parsedInput.data.ownerAddress);
+  if (!ownerAddress) {
+    return { ok: false, error: "Connect a wallet before running an audit." };
   }
 
   let env: ReturnType<typeof getServerEnv>;
@@ -72,6 +80,7 @@ export async function runAudit(
     const durationMs = Date.now() - startedAt;
     const convex = getConvexHttpClient();
     const analysisId = await convex.mutation(anyApi.analyses.create, {
+      ownerAddress,
       prompt: doc.finalUrl,
       status: "completed",
       result,
@@ -87,6 +96,7 @@ export async function runAudit(
     try {
       const convex = getConvexHttpClient();
       const analysisId = await convex.mutation(anyApi.analyses.create, {
+        ownerAddress,
         prompt: parsedInput.data.url,
         status: "error",
         error,
@@ -100,4 +110,3 @@ export async function runAudit(
     }
   }
 }
-

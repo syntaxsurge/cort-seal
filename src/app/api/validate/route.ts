@@ -15,6 +15,7 @@ const bodySchema = z.object({
   url: z.string().trim().url(),
   claim: z.string().trim().min(8).max(600),
   runs: z.coerce.number().int().min(2).max(5).default(3),
+  ownerAddress: z.string().optional(),
 });
 
 const corsHeaders = {
@@ -211,6 +212,7 @@ export async function POST(req: Request) {
 
     const seal = await convex.mutation(anyApi.seals.ingestFromApi, {
       token: ingestToken,
+      ownerAddress: body.ownerAddress,
       claim: body.claim,
       sourceUrl: doc.finalUrl,
       sourceTitle: doc.title,

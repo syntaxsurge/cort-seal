@@ -7,6 +7,7 @@ import { CortensorHttpError } from "@/lib/cortensor/types";
 import { runClaimCheck } from "@/features/cortseal/services/claimCheck";
 import { getConvexHttpClient } from "@/lib/db/convex/httpClient";
 import { getServerEnv } from "@/lib/env/server";
+import { normalizeWalletAddress } from "@/lib/wallet/address";
 
 export type RunTryState =
   | { ok: true; analysisId: string }
@@ -14,6 +15,7 @@ export type RunTryState =
 
 const runTrySchema = z.object({
   prompt: z.string().trim().min(1).max(12_000),
+  ownerAddress: z.string().optional(),
 });
 
 function formatUnknownError(err: unknown): string {
@@ -32,6 +34,7 @@ export async function runTry(
 ): Promise<RunTryState> {
   const parsedInput = runTrySchema.safeParse({
     prompt: formData.get("prompt"),
+    ownerAddress: formData.get("ownerAddress"),
   });
 
   if (!parsedInput.success) {
@@ -41,6 +44,10 @@ export async function runTry(
   }
 
   const { prompt } = parsedInput.data;
+  const ownerAddress = normalizeWalletAddress(parsedInput.data.ownerAddress);
+  if (!ownerAddress) {
+    return { ok: false, error: "Connect a wallet before running a claim check." };
+  }
   let env: ReturnType<typeof getServerEnv>;
   try {
     env = getServerEnv();
@@ -60,6 +67,7 @@ export async function runTry(
     try {
       const convex = getConvexHttpClient();
       const analysisId = await convex.mutation(anyApi.analyses.create, {
+        ownerAddress,
         prompt,
         status: "error",
         error,
@@ -78,6 +86,7 @@ export async function runTry(
   try {
     const convex = getConvexHttpClient();
     const analysisId = await convex.mutation(anyApi.analyses.create, {
+      ownerAddress,
       prompt,
       status: "completed",
       result,

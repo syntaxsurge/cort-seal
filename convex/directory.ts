@@ -1,6 +1,8 @@
 import { queryGeneric } from "convex/server";
 import { v } from "convex/values";
 
+import { normalizeOwnerAddress } from "./lib/ownerAddress";
+
 const MAX_LIMIT = 100;
 
 function clampLimit(value: number | undefined): number {
@@ -16,18 +18,36 @@ function inferAnalysisType(prompt: string, resultKind: string | null): "try" | "
   return "try";
 }
 
-export const listArtifacts = queryGeneric({
+export const listArtifactsByOwner = queryGeneric({
   args: {
+    ownerAddress: v.string(),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const ownerAddress = normalizeOwnerAddress(args.ownerAddress);
     const limit = clampLimit(args.limit);
 
     const [analyses, proofs, seals, monitors] = await Promise.all([
-      ctx.db.query("analyses").order("desc").take(limit),
-      ctx.db.query("proofs").order("desc").take(limit),
-      ctx.db.query("seals").withIndex("by_createdAt").order("desc").take(limit),
-      ctx.db.query("monitors").withIndex("by_createdAt").order("desc").take(limit),
+      ctx.db
+        .query("analyses")
+        .withIndex("by_owner_createdAt", (q) => q.eq("ownerAddress", ownerAddress))
+        .order("desc")
+        .take(limit),
+      ctx.db
+        .query("proofs")
+        .withIndex("by_owner_createdAt", (q) => q.eq("ownerAddress", ownerAddress))
+        .order("desc")
+        .take(limit),
+      ctx.db
+        .query("seals")
+        .withIndex("by_owner_createdAt", (q) => q.eq("ownerAddress", ownerAddress))
+        .order("desc")
+        .take(limit),
+      ctx.db
+        .query("monitors")
+        .withIndex("by_owner_createdAt", (q) => q.eq("ownerAddress", ownerAddress))
+        .order("desc")
+        .take(limit),
     ]);
 
     const safeAnalyses = analyses.map((analysis) => {

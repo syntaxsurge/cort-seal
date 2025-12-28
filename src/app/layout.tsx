@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, IBM_Plex_Mono, Source_Sans_3 } from "next/font/google";
+import "@rainbow-me/rainbowkit/styles.css";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { Providers } from "@/app/providers";
 
 const bodyFont = Source_Sans_3({
   variable: "--font-body",
@@ -37,29 +39,39 @@ export default function RootLayout({
       <body
         className={`${bodyFont.variable} ${displayFont.variable} ${monoFont.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="relative grid min-h-dvh grid-rows-[auto,1fr,auto]">
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-foreground focus:shadow-lg"
-            >
-              Skip to content
-            </a>
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-            >
-              <div className="absolute -left-24 -top-24 h-104 w-104 rounded-full bg-primary/20 blur-3xl animate-float" />
-              <div className="absolute -right-24 top-12 h-96 w-96 rounded-full bg-accent/25 blur-3xl animate-float" />
-              <div className="absolute -bottom-24 left-[18%] h-88 w-88 rounded-full bg-secondary/40 blur-3xl" />
+        <Providers>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="relative grid min-h-dvh grid-rows-[auto,1fr,auto]">
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-foreground focus:shadow-lg"
+              >
+                Skip to content
+              </a>
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+              >
+                <div className="absolute -left-24 -top-24 h-104 w-104 rounded-full bg-primary/20 blur-3xl animate-float" />
+                <div className="absolute -right-24 top-12 h-96 w-96 rounded-full bg-accent/25 blur-3xl animate-float" />
+                <div className="absolute -bottom-24 left-[18%] h-88 w-88 rounded-full bg-secondary/40 blur-3xl" />
+              </div>
+              <SiteHeader />
+              <main
+                id="main-content"
+                className="relative z-10 scroll-mt-[var(--site-header-height)]"
+              >
+                {children}
+              </main>
+              <SiteFooter />
             </div>
-            <SiteHeader />
-            <main id="main-content" className="relative z-10 scroll-mt-[var(--site-header-height)]">
-              {children}
-            </main>
-            <SiteFooter />
-          </div>
-        </ThemeProvider>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

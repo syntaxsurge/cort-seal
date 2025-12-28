@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import { useAccount } from "wagmi";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeWalletAddress } from "@/lib/wallet/address";
 
 type ValidateResponse = {
   kind: "cortseal:validate:v1";
@@ -50,6 +52,7 @@ export function ValidateForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ValidateResponse | null>(null);
+  const { address } = useAccount();
 
   const origin = useMemo(() => {
     if (typeof window === "undefined") return "";
@@ -63,10 +66,11 @@ export function ValidateForm() {
     setLoading(true);
 
     try {
+      const ownerAddress = normalizeWalletAddress(address);
       const res = await fetch("/api/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, claim, runs }),
+        body: JSON.stringify({ url, claim, runs, ownerAddress }),
       });
 
       const json: unknown = await res.json().catch(() => null);

@@ -1,6 +1,8 @@
 import { mutationGeneric, queryGeneric } from "convex/server";
 import { v } from "convex/values";
 
+import { normalizeOwnerAddress } from "./lib/ownerAddress";
+
 const BUNDLE_HASH_RE = /^[a-f0-9]{64}$/i;
 const MIN_PUBLIC_ID_LEN = 8;
 const MAX_PUBLIC_ID_LEN = 64;
@@ -8,6 +10,7 @@ const MAX_BUNDLE_BYTES = 950_000;
 
 export const create = mutationGeneric({
   args: {
+    ownerAddress: v.optional(v.string()),
     analysisId: v.id("analyses"),
     publicId: v.string(),
     bundleHashSha256: v.string(),
@@ -16,6 +19,8 @@ export const create = mutationGeneric({
     createdAt: v.number(),
   },
   handler: async (ctx, args) => {
+    const ownerAddress = normalizeOwnerAddress(args.ownerAddress);
+
     if (args.publicId.length < MIN_PUBLIC_ID_LEN || args.publicId.length > MAX_PUBLIC_ID_LEN) {
       throw new Error(
         `publicId must be between ${MIN_PUBLIC_ID_LEN} and ${MAX_PUBLIC_ID_LEN} chars.`
@@ -57,6 +62,7 @@ export const create = mutationGeneric({
     }
 
     const proofId = await ctx.db.insert("proofs", {
+      ownerAddress,
       analysisId: args.analysisId,
       publicId: args.publicId,
       bundleHashSha256: args.bundleHashSha256,
@@ -91,5 +97,18 @@ export const getByAnalysisId = queryGeneric({
       .query("proofs")
       .withIndex("by_analysisId", (q) => q.eq("analysisId", args.analysisId))
       .first();
+  },
+});
+
+export const listByOwner = queryGeneric({
+  args: { ownerAddress: v.string(), limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const ownerAddress = normalizeOwnerAddress(args.ownerAddress);
+    const limit = Math.max(1, Math.min(args.limit ?? 40, 200));
+    return await ctx.db
+      .query("proofs")
+      .withIndex("by_owner_createdAt", (q) => q.eq("ownerAddress", ownerAddress))
+      .order("desc")
+      .take(limit);
   },
 });

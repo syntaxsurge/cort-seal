@@ -8,6 +8,7 @@ import { getConvexHttpClient } from "@/lib/db/convex/httpClient";
 
 export const analysisSchema = z
   .object({
+    ownerAddress: z.string().optional(),
     prompt: z.string(),
     status: z.union([z.literal("completed"), z.literal("error")]),
     result: z.unknown().optional(),
@@ -30,4 +31,3 @@ export async function getAnalysisById(id: GenericId<"analyses">): Promise<Analys
 
   return parsed.data;
 }
-

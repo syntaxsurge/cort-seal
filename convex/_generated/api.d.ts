@@ -12,6 +12,7 @@ import type * as analyses from "../analyses.js";
 import type * as crons from "../crons.js";
 import type * as directory from "../directory.js";
 import type * as lib_monitorsShared from "../lib/monitorsShared.js";
+import type * as lib_ownerAddress from "../lib/ownerAddress.js";
 import type * as monitors from "../monitors.js";
 import type * as monitorsActions from "../monitorsActions.js";
 import type * as proofs from "../proofs.js";
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   directory: typeof directory;
   "lib/monitorsShared": typeof lib_monitorsShared;
+  "lib/ownerAddress": typeof lib_ownerAddress;
   monitors: typeof monitors;
   monitorsActions: typeof monitorsActions;
   proofs: typeof proofs;

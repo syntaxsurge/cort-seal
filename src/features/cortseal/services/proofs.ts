@@ -42,6 +42,7 @@ export type CortsealProofBundle = z.infer<typeof cortsealProofBundleSchema>;
 
 export const proofDocSchema = z
   .object({
+    ownerAddress: z.string().optional(),
     analysisId: z.string().min(1),
     publicId: z.string().min(8).max(64),
     bundleHashSha256: sha256HexSchema,
@@ -244,6 +245,7 @@ export async function createProofForAnalysis(args: {
       const bundleHashSha256 = sha256Hex(bundleJson);
 
       const created = await convex.mutation(anyApi.proofs.create, {
+        ownerAddress: analysis.ownerAddress,
         analysisId: args.analysisId,
         publicId,
         bundleHashSha256,

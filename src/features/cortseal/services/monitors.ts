@@ -9,6 +9,7 @@ import { getConvexHttpClient } from "@/lib/db/convex/httpClient";
 export const monitorDocSchema = z
   .object({
     _id: z.string().min(1),
+    ownerAddress: z.string().optional(),
     name: z.string(),
     kind: z.union([z.literal("rss"), z.literal("router")]),
     enabled: z.boolean(),
@@ -31,6 +32,7 @@ export type MonitorDoc = z.infer<typeof monitorDocSchema>;
 export const monitorRunDocSchema = z
   .object({
     _id: z.string().min(1),
+    ownerAddress: z.string().optional(),
     monitorId: z.string().min(1),
     startedAt: z.number(),
     finishedAt: z.number().optional(),
@@ -77,4 +79,3 @@ export async function listMonitorRuns(args: {
   const parsed = z.array(monitorRunDocSchema).safeParse(result);
   return parsed.success ? parsed.data : [];
 }
-

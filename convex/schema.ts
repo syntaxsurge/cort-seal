@@ -3,6 +3,7 @@ import { v } from "convex/values";
 
 export default defineSchema({
   analyses: defineTable({
+    ownerAddress: v.optional(v.string()),
     prompt: v.string(),
     status: v.union(v.literal("completed"), v.literal("error")),
     result: v.optional(v.any()),
@@ -10,9 +11,10 @@ export default defineSchema({
     createdAt: v.number(),
     durationMs: v.number(),
     sessionId: v.number(),
-  }),
+  }).index("by_owner_createdAt", ["ownerAddress", "createdAt"]),
 
   proofs: defineTable({
+    ownerAddress: v.optional(v.string()),
     analysisId: v.id("analyses"),
     publicId: v.string(),
     bundleHashSha256: v.string(),
@@ -21,9 +23,11 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_publicId", ["publicId"])
-    .index("by_analysisId", ["analysisId"]),
+    .index("by_analysisId", ["analysisId"])
+    .index("by_owner_createdAt", ["ownerAddress", "createdAt"]),
 
   monitors: defineTable({
+    ownerAddress: v.optional(v.string()),
     name: v.string(),
     kind: v.union(v.literal("rss"), v.literal("router")),
     enabled: v.boolean(),
@@ -40,9 +44,11 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_createdAt", ["createdAt"])
-    .index("by_enabled_nextRunAt", ["enabled", "nextRunAt"]),
+    .index("by_enabled_nextRunAt", ["enabled", "nextRunAt"])
+    .index("by_owner_createdAt", ["ownerAddress", "createdAt"]),
 
   monitorRuns: defineTable({
+    ownerAddress: v.optional(v.string()),
     monitorId: v.id("monitors"),
     startedAt: v.number(),
     finishedAt: v.optional(v.number()),
@@ -55,9 +61,12 @@ export default defineSchema({
     routerStatusHttp: v.optional(v.number()),
     minerCount: v.optional(v.number()),
     createdAt: v.number(),
-  }).index("by_monitorId_startedAt", ["monitorId", "startedAt"]),
+  })
+    .index("by_monitorId_startedAt", ["monitorId", "startedAt"])
+    .index("by_owner_createdAt", ["ownerAddress", "createdAt"]),
 
   seals: defineTable({
+    ownerAddress: v.optional(v.string()),
     publicId: v.string(),
     monitorId: v.optional(v.id("monitors")),
     feedItemId: v.optional(v.string()),
@@ -99,7 +108,8 @@ export default defineSchema({
     .index("by_createdAt", ["createdAt"])
     .index("by_verdict_createdAt", ["verdict", "createdAt"])
     .index("by_monitorId_createdAt", ["monitorId", "createdAt"])
-    .index("by_monitorId_feedItemId", ["monitorId", "feedItemId"]),
+    .index("by_monitorId_feedItemId", ["monitorId", "feedItemId"])
+    .index("by_owner_createdAt", ["ownerAddress", "createdAt"]),
 
   rateLimits: defineTable({
     key: v.string(),

@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { getConvexHttpClient } from "@/lib/db/convex/httpClient";
+import { normalizeWalletAddress } from "@/lib/wallet/address";
 
 export type CreateMonitorState =
   | { ok: true; monitorId: string }
@@ -21,6 +22,7 @@ const createMonitorSchema = z.object({
   feedUrl: z.string().trim().url().optional(),
   routerBaseUrl: z.string().trim().url().optional(),
   minMinerCount: z.coerce.number().int().min(0).max(10000).optional(),
+  ownerAddress: z.string().optional(),
 });
 
 const monitorIdSchema = z.string().min(1);
@@ -43,6 +45,7 @@ export async function createMonitor(
     feedUrl: formData.get("feedUrl") || undefined,
     routerBaseUrl: formData.get("routerBaseUrl") || undefined,
     minMinerCount: formData.get("minMinerCount") || undefined,
+    ownerAddress: formData.get("ownerAddress"),
   });
 
   if (!parsedInput.success) {
@@ -55,9 +58,15 @@ export async function createMonitor(
     return { ok: false, error: "Feed URL is required for RSS monitors." };
   }
 
+  const ownerAddress = normalizeWalletAddress(parsedInput.data.ownerAddress);
+  if (!ownerAddress) {
+    return { ok: false, error: "Connect a wallet before creating a monitor." };
+  }
+
   try {
     const convex = getConvexHttpClient();
     const monitorId = await convex.mutation(anyApi.monitors.create, {
+      ownerAddress,
       name: parsedInput.data.name,
       kind: parsedInput.data.kind,
       intervalMinutes: parsedInput.data.intervalMinutes,
@@ -78,6 +87,7 @@ export async function createMonitor(
 export async function runMonitorNow(formData: FormData): Promise<void> {
   const idRaw = formData.get("monitorId");
   const returnTo = safeReturnTo(formData.get("returnTo"));
+  const ownerAddress = normalizeWalletAddress(formData.get("ownerAddress"));
 
   const parsedId = monitorIdSchema.safeParse(idRaw);
   if (!parsedId.success) {
@@ -87,6 +97,15 @@ export async function runMonitorNow(formData: FormData): Promise<void> {
   const monitorId = parsedId.data as GenericId<"monitors">;
 
   const convex = getConvexHttpClient();
+  if (!ownerAddress) {
+    redirect(returnTo);
+  }
+
+  const monitor = await convex.query(anyApi.monitors.get, { id: monitorId });
+  if (!monitor || (monitor.ownerAddress && monitor.ownerAddress !== ownerAddress)) {
+    redirect(returnTo);
+  }
+
   await convex.mutation(anyApi.monitors.runNow, { id: monitorId });
 
   revalidatePath("/monitors");
@@ -98,6 +117,7 @@ export async function setMonitorEnabled(formData: FormData): Promise<void> {
   const idRaw = formData.get("monitorId");
   const enabledRaw = formData.get("enabled");
   const returnTo = safeReturnTo(formData.get("returnTo"));
+  const ownerAddress = normalizeWalletAddress(formData.get("ownerAddress"));
 
   const parsedId = monitorIdSchema.safeParse(idRaw);
   if (!parsedId.success) {
@@ -108,10 +128,18 @@ export async function setMonitorEnabled(formData: FormData): Promise<void> {
   const monitorId = parsedId.data as GenericId<"monitors">;
 
   const convex = getConvexHttpClient();
+  if (!ownerAddress) {
+    redirect(returnTo);
+  }
+
+  const monitor = await convex.query(anyApi.monitors.get, { id: monitorId });
+  if (!monitor || (monitor.ownerAddress && monitor.ownerAddress !== ownerAddress)) {
+    redirect(returnTo);
+  }
+
   await convex.mutation(anyApi.monitors.toggleEnabled, { id: monitorId, enabled });
 
   revalidatePath("/monitors");
   revalidatePath(`/monitors/${monitorId}`);
   redirect(returnTo);
 }
-

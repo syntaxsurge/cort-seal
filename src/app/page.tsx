@@ -6,6 +6,7 @@ import {
   Download,
   FileSearch,
   FileText,
+  FolderArchive,
   Globe,
   Link2,
   ListChecks,
@@ -78,11 +79,18 @@ const coreRoutes = [
     icon: BadgeCheck,
   },
   {
-    title: "Artifacts library",
-    description: "Browse analyses, proofs, seals, and monitors.",
+    title: "Seal directory",
+    description: "Browse public seals, badges, and embeds.",
     href: "/directory",
     path: "/directory",
     icon: ShieldCheck,
+  },
+  {
+    title: "My library",
+    description: "See your analyses, proofs, seals, and monitors.",
+    href: "/library",
+    path: "/library",
+    icon: FolderArchive,
   },
   {
     title: "Monitor workspace",
@@ -138,7 +146,7 @@ const routeGroups: Array<{
         description: "Verdict view with evidence and share tools.",
         path: "/seal/[publicId]",
         href: "/directory",
-        linkLabel: "Open Library",
+        linkLabel: "Open Directory",
         icon: BadgeCheck,
       },
       {
@@ -146,7 +154,7 @@ const routeGroups: Array<{
         description: "Iframe-friendly badge card for embeds.",
         path: "/embed/[publicId]",
         href: "/directory",
-        linkLabel: "Open Library",
+        linkLabel: "Open Directory",
         icon: Link2,
       },
       {
@@ -447,7 +455,7 @@ export default function Home() {
                 <Link href="/audit">Audit a URL</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/directory">Open library</Link>
+                <Link href="/library">Open my library</Link>
               </Button>
             </div>
           </div>

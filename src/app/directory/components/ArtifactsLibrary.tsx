@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { DirectoryArtifacts } from "@/features/cortseal/services/directory";
+import type { DirectoryArtifacts } from "@/features/cortseal/types/directory";
 
 type Filter = "all" | "analyses" | "proofs" | "seals" | "monitors";
 
