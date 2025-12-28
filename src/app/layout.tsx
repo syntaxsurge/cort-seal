@@ -43,9 +43,9 @@ export default function RootLayout({
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
             >
-              <div className="absolute -left-24 -top-24 h-[26rem] w-[26rem] rounded-full bg-primary/20 blur-3xl animate-float" />
-              <div className="absolute -right-24 top-12 h-[24rem] w-[24rem] rounded-full bg-accent/25 blur-3xl animate-float" />
-              <div className="absolute -bottom-24 left-[18%] h-[22rem] w-[22rem] rounded-full bg-secondary/40 blur-3xl" />
+              <div className="absolute -left-24 -top-24 h-104 w-104 rounded-full bg-primary/20 blur-3xl animate-float" />
+              <div className="absolute -right-24 top-12 h-96 w-96 rounded-full bg-accent/25 blur-3xl animate-float" />
+              <div className="absolute -bottom-24 left-[18%] h-88 w-88 rounded-full bg-secondary/40 blur-3xl" />
             </div>
             <SiteHeader />
             <main className="relative z-10 flex-1">{children}</main>

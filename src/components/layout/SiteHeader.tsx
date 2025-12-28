@@ -62,7 +62,7 @@ export function SiteHeader() {
             <Button
               asChild
               size="sm"
-              className="bg-gradient-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
+              className="bg-linear-to-r from-primary via-indigo-500 to-primary text-primary-foreground shadow-sm transition hover:opacity-90"
             >
               <Link href="/try">Start a check</Link>
             </Button>
