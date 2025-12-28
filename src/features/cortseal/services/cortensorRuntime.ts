@@ -15,10 +15,224 @@ export function completionToText(response: CortensorCompletionResponse): string 
   if (typeof response.result === "string") return response.result;
 
   try {
-    return JSON.stringify(response.result ?? response);
+    if (response.result !== undefined) {
+      return JSON.stringify(response.result);
+    }
+    if (response.output !== undefined) {
+      return JSON.stringify(response.output);
+    }
+    return JSON.stringify(response);
   } catch {
-    return String(response.result ?? response);
+    if (response.result !== undefined) return String(response.result);
+    if (response.output !== undefined) return String(response.output);
+    return String(response);
   }
+}
+
+function normalizeSmartQuotes(text: string): string {
+  return text.replace(/[“”]/g, "\"").replace(/[‘’]/g, "'");
+}
+
+function removeTrailingCommas(text: string): string {
+  return text.replace(/,\s*([}\]])/g, "$1");
+}
+
+function quoteUnquotedKeys(text: string): string {
+  let result = "";
+  let inDouble = false;
+  let escaped = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i]!;
+
+    if (inDouble) {
+      result += ch;
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escaped = true;
+        continue;
+      }
+      if (ch === "\"") {
+        inDouble = false;
+      }
+      continue;
+    }
+
+    if (ch === "\"") {
+      inDouble = true;
+      result += ch;
+      continue;
+    }
+
+    if (ch === "{" || ch === ",") {
+      let j = i + 1;
+      let whitespace = "";
+      while (j < text.length && /\s/.test(text[j]!)) {
+        whitespace += text[j]!;
+        j += 1;
+      }
+
+      const start = j;
+      if (j < text.length && /[A-Za-z_]/.test(text[j]!)) {
+        j += 1;
+        while (j < text.length && /[A-Za-z0-9_]/.test(text[j]!)) {
+          j += 1;
+        }
+
+        const key = text.slice(start, j);
+        let k = j;
+        let afterKeyWhitespace = "";
+        while (k < text.length && /\s/.test(text[k]!)) {
+          afterKeyWhitespace += text[k]!;
+          k += 1;
+        }
+
+        if (text[k] === ":") {
+          result += `${ch}${whitespace}"${key}"${afterKeyWhitespace}:`;
+          i = k;
+          continue;
+        }
+      }
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
+
+function convertSingleQuotedStrings(text: string): string {
+  let result = "";
+  let inSingle = false;
+  let inDouble = false;
+  let escaped = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i]!;
+
+    if (inSingle) {
+      if (escaped) {
+        if (ch === "\"") {
+          result += "\\\"";
+        } else if (ch === "'") {
+          result += "'";
+        } else {
+          result += ch;
+        }
+        escaped = false;
+        continue;
+      }
+
+      if (ch === "\\") {
+        result += "\\";
+        escaped = true;
+        continue;
+      }
+
+      if (ch === "'") {
+        result += "\"";
+        inSingle = false;
+        continue;
+      }
+
+      if (ch === "\"") {
+        result += "\\\"";
+        continue;
+      }
+
+      result += ch;
+      continue;
+    }
+
+    if (inDouble) {
+      result += ch;
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escaped = true;
+        continue;
+      }
+      if (ch === "\"") {
+        inDouble = false;
+      }
+      continue;
+    }
+
+    if (ch === "'") {
+      inSingle = true;
+      result += "\"";
+      continue;
+    }
+
+    if (ch === "\"") {
+      inDouble = true;
+      result += ch;
+      continue;
+    }
+
+    result += ch;
+  }
+
+  return result;
+}
+
+function repairJsonText(text: string): string {
+  let repaired = text.trim();
+  if (!repaired) return repaired;
+
+  repaired = normalizeSmartQuotes(repaired);
+  repaired = convertSingleQuotedStrings(repaired);
+  repaired = removeTrailingCommas(repaired);
+  repaired = quoteUnquotedKeys(repaired);
+  repaired = removeTrailingCommas(repaired);
+
+  return repaired;
+}
+
+function tryParseJsonCandidate(text: string): unknown | null {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // fallthrough
+  }
+
+  const repaired = repairJsonText(trimmed);
+  if (repaired !== trimmed) {
+    try {
+      return JSON.parse(repaired);
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+function unwrapJsonContainer(value: unknown): unknown {
+  if (typeof value !== "object" || value === null) return value;
+
+  const obj = value as Record<string, unknown>;
+  const keys = ["output", "result", "data"] as const;
+
+  for (const key of keys) {
+    const candidate = obj[key];
+    if (typeof candidate === "string") {
+      const parsed = tryParseJsonCandidate(candidate);
+      if (parsed !== null) return parsed;
+    } else if (typeof candidate === "object" && candidate !== null) {
+      return candidate;
+    }
+  }
+
+  return value;
 }
 
 function findFirstJsonSubstring(text: string): string | null {
@@ -80,30 +294,22 @@ export function tryParseJsonFromText(text: string): unknown | null {
   const trimmed = text.trim();
   if (!trimmed) return null;
 
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    // fallthrough
-  }
+  const direct = tryParseJsonCandidate(trimmed);
+  if (direct !== null) return unwrapJsonContainer(direct);
 
   const fenceMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
   if (fenceMatch?.[1]) {
     const inside = fenceMatch[1].trim();
-    try {
-      return JSON.parse(inside);
-    } catch {
-      // fallthrough
-    }
+    const parsed = tryParseJsonCandidate(inside);
+    if (parsed !== null) return unwrapJsonContainer(parsed);
   }
 
   const jsonSubstring = findFirstJsonSubstring(trimmed);
   if (!jsonSubstring) return null;
 
-  try {
-    return JSON.parse(jsonSubstring);
-  } catch {
-    return null;
-  }
+  const parsed = tryParseJsonCandidate(jsonSubstring);
+  if (parsed !== null) return unwrapJsonContainer(parsed);
+  return null;
 }
 
 async function delay(ms: number): Promise<void> {
@@ -161,4 +367,3 @@ export async function mapWithConcurrency<T, R>(
   await Promise.all(workers);
   return results;
 }
-

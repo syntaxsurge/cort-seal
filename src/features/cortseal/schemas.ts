@@ -1,46 +1,68 @@
 import { z } from "zod";
 
-export const claimVerdictSchema = z.union([
-  z.literal("supported"),
-  z.literal("unsupported"),
-  z.literal("unclear"),
-]);
+function extractNumericValue(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  const fractionMatch = trimmed.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
+  if (fractionMatch) {
+    const numerator = Number(fractionMatch[1]);
+    const denominator = Number(fractionMatch[2]);
+    if (Number.isFinite(numerator) && Number.isFinite(denominator) && denominator !== 0) {
+      return numerator / denominator;
+    }
+  }
+
+  const numberMatch = trimmed.match(/-?\d+(?:\.\d+)?/);
+  if (!numberMatch) return null;
+  const numeric = Number(numberMatch[0]);
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
+function normalizePercent(value: number): number {
+  let normalized = value;
+  if (normalized > 1 && normalized <= 100) normalized = normalized / 100;
+  return Math.max(0, Math.min(1, normalized));
+}
+
+function normalizeScore100(value: number): number {
+  let normalized = value;
+  if (normalized >= 0 && normalized <= 1) normalized = normalized * 100;
+  return Math.max(0, Math.min(100, normalized));
+}
+
+function normalizeScore10(value: number): number {
+  let normalized = value;
+  if (normalized >= 0 && normalized <= 1) normalized = normalized * 10;
+  if (normalized > 10 && normalized <= 100) normalized = normalized / 10;
+  return Math.max(0, Math.min(10, normalized));
+}
+
+export const claimVerdictSchema = z.preprocess((value) => {
+  if (typeof value !== "string") return value;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "supported" || normalized === "unsupported" || normalized === "unclear") {
+    return normalized;
+  }
+  if (normalized === "unknown") return "unclear";
+  return value;
+}, z.union([z.literal("supported"), z.literal("unsupported"), z.literal("unclear")]));
 
 export type ClaimVerdict = z.infer<typeof claimVerdictSchema>;
 
 const confidenceSchema = z.preprocess((value) => {
-  let numeric = value;
-
-  if (typeof numeric === "string") {
-    const parsed = Number(numeric);
-    numeric = Number.isFinite(parsed) ? parsed : numeric;
-  }
-
-  if (typeof numeric !== "number" || !Number.isFinite(numeric)) return numeric;
-
-  let normalized = numeric;
-  if (normalized > 1 && normalized <= 100) normalized = normalized / 100;
-
-  return Math.max(0, Math.min(1, normalized));
+  const numeric = extractNumericValue(value);
+  if (numeric === null) return value;
+  return normalizePercent(numeric);
 }, z.number().min(0).max(1));
 
 const scoreSchema = z.preprocess((value) => {
-  let numeric = value;
-
-  if (typeof numeric === "string") {
-    const parsed = Number(numeric);
-    numeric = Number.isFinite(parsed) ? parsed : numeric;
-  }
-
-  if (typeof numeric !== "number" || !Number.isFinite(numeric)) return numeric;
-
-  let normalized = numeric;
-
-  if (normalized >= 0 && normalized <= 1) {
-    normalized = normalized * 100;
-  }
-
-  return Math.max(0, Math.min(100, normalized));
+  const numeric = extractNumericValue(value);
+  if (numeric === null) return value;
+  return normalizeScore100(numeric);
 }, z.number().min(0).max(100));
 
 const stdevSchema = z.number().min(0).max(100);
@@ -77,16 +99,9 @@ export const verificationParsedSchema = z
     verdict: claimVerdictSchema,
     confidence: confidenceSchema,
     score: z.preprocess((value) => {
-      let numeric = value;
-
-      if (typeof numeric === "string") {
-        const parsed = Number(numeric);
-        numeric = Number.isFinite(parsed) ? parsed : numeric;
-      }
-
-      if (typeof numeric !== "number" || !Number.isFinite(numeric)) return numeric;
-
-      return Math.max(0, Math.min(10, numeric));
+      const numeric = extractNumericValue(value);
+      if (numeric === null) return value;
+      return normalizeScore10(numeric);
     }, z.number().min(0).max(10)).optional(),
     rationale: z.string().trim().min(1).max(2000),
     evidence: z

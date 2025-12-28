@@ -380,7 +380,9 @@ CortSeal is a Next.js (App Router) web app that audits creator drafts, public UR
 - `src/app/**` holds routes; `/try` uses a server action (`src/app/try/actions.ts`) to run a claim check pipeline and store results.
 - `/audit` uses a server action (`src/app/audit/actions.ts`) to fetch a URL, run a source-backed validator pipeline, and store results.
 - Cortensor Router client lives in `src/lib/cortensor/client.ts` and uses validated env from `src/lib/env/server.ts`.
+- Cortensor completions are normalized into JSON-safe payloads in `src/features/cortseal/services/cortensorRuntime.ts` (handles code fences, smart quotes, trailing commas, unquoted keys, and nested `output`/`result` envelopes) before Zod validation.
 - Claim extraction + redundant verifier orchestration + rubric scoring lives in `src/features/cortseal/services/claimCheck.ts` and stores a Zod-validated result (`src/features/cortseal/schemas.ts`) under `analyses.result` with `kind: "cortseal:claimcheck:v1"`.
+- Rubric and verifier schema parsing in `src/features/cortseal/schemas.ts` normalizes percent, fraction, and 0-1 numeric strings into the expected score ranges.
 - Source audits live in `src/features/cortseal/services/sourceAudit.ts` and store `kind: "cortseal:sourceaudit:v1"` under `analyses.result`.
 - The public validator endpoint lives in `src/app/api/validate/route.ts`, applies Convex-backed rate limiting (`convex/rateLimit.ts`), returns `kind: "cortseal:validate:v1"`, and mints a shareable Seal in Convex via `convex/seals.ts`.
 - URL ingestion utilities live in `src/lib/security/safeUrl.ts` (SSRF guard) and `src/lib/fetchers/readableText.ts` (HTML → readable text).
