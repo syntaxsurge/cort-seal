@@ -33,20 +33,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “Before touching the app UI, I’m showing the Cortensor side: the session CortSeal is configured to use. Session 173 is our compute context — it’s where tasks get routed, and where PoI-style redundancy is enforced. This gives judges a concrete, inspectable session ID that matches what the app uses — without exposing any secrets.”
 
-## 3. Landing page: what CortSeal does (problem → solution)
-- **URL:** /
-- **Shot:** `http://localhost:3000/` in the browser; a clean landing experience describing audits, trust seals, proofs, and public endpoints.
-- **Steps:**
-  1. **Current page:** Browser — confirm you’re not currently on the Cortensor Dashboard tab.
-  2. **Navigate:** Open URL directly: `http://localhost:3000/` → confirm the address bar shows `http://localhost:3000/`.
-  3. **Current page:** Landing page — confirm you can see the CortSeal branding and a clear “what this does” section.
-  4. **Action:** Scroll the page slowly — pause when you see sections describing (a) Draft audits, (b) URL audits, (c) Claim validation + seals, (d) Monitors, and (e) Public API.
-  5. **Action:** Scroll back to the top — pause on the primary call-to-action area.
-  6. **Verify on-screen:** The landing page clearly communicates the workflow: input content → extract claims → verify with redundancy → produce shareable seal + downloadable proof artifacts.
-- **Voiceover:**
-  > “CortSeal solves a simple creator problem: you want to publish confidently, but you also want proof. The app extracts verifiable claims from your draft or a public page, runs redundant decentralized inference to measure agreement and disagreement, adds a rubric score for trust, and then publishes a shareable seal with an evidence bundle that anyone can inspect.”
-
-## 4. Draft claim check: /try → /try/results/[id]
+## 3. Draft claim check: /try → /try/results/[id]
 - **URL:** /try
 - **Shot:** `http://localhost:3000/try` showing a draft input form; then it redirects to `/try/results/[id]` with a claims table showing agreement/dispersion and rubric scoring.
 - **Steps:**
@@ -60,7 +47,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “This is the creator workflow: I paste a draft, click Run Claim Check, and CortSeal automatically extracts claims. Under the hood it runs multiple redundant verifier calls — PoI-style — so we don’t just get one model’s opinion. The results page shows what was extracted and how consistent the redundant runs were, which is exactly the trust signal judges want to see.”
 
-## 5. Evidence + Proof artifacts: /api/analyses/[id]/evidence → /api/analyses/[id]/proof → /share/[id] → /api/proofs/[id]
+## 4. Evidence + Proof artifacts: /api/analyses/[id]/evidence → /api/analyses/[id]/proof → /share/[id] → /api/proofs/[id]
 - **URL:** /try/results/[id]
 - **Shot:** The results page in one tab; then new tabs showing evidence JSON, proof generation JSON, the public share page, and the immutable proof JSON download.
 - **Steps:**
@@ -75,7 +62,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “This is where CortSeal becomes more than a UI — it becomes a trust primitive. For every analysis, we can export a raw evidence snapshot, then generate a public proof bundle with deterministic checks. The share page is what creators link publicly, and the JSON endpoints are what developers integrate — a complete validation artifact pipeline aligned with PoI and PoUW.”
 
-## 6. Audit a real public source: /audit → /audit/results/[id]
+## 5. Audit a real public source: /audit → /audit/results/[id]
 - **URL:** /audit
 - **Shot:** `http://localhost:3000/audit` showing a URL audit form; then it redirects to `/audit/results/[id]` with extracted claims and evidence quotes from the page.
 - **Steps:**
@@ -89,7 +76,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “Now I’m auditing a real, public source: the official Hackathon #3 page. CortSeal fetches readable text safely, extracts claims, and validates them against the source with redundant runs. The results aren’t just text — they include evidence quotes and the stability of agreement across runs, which is exactly how you build a public-good verifier.”
 
-## 7. Mint a shareable seal from a single claim: /validate → /seal/[publicId]
+## 6. Mint a shareable seal from a single claim: /validate → /seal/[publicId]
 - **URL:** /validate
 - **Shot:** `http://localhost:3000/validate` with URL + claim fields; then the public seal page `/seal/[publicId]` shows verdict + evidence.
 - **Steps:**
@@ -105,7 +92,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “This is the simplest ‘trust-as-a-service’ flow. I provide one claim and one source URL, CortSeal runs redundant validation, applies a rubric score, and then mints a public seal with a stable ID. The seal page is what creators share — it’s easy to read, but it’s backed by machine-verifiable artifacts.”
 
-## 8. Discovery + distribution surfaces: /directory + /embed + badge + seal bundle JSON
+## 7. Discovery + distribution surfaces: /directory + /embed + badge + seal bundle JSON
 - **URL:** /directory
 - **Shot:** `http://localhost:3000/directory` listing public seals; then tabs showing the embed card, the SVG badge, and the seal JSON bundle for the same public ID.
 - **Steps:**
@@ -119,7 +106,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “This is the growth loop: directory for discoverability, embeds and badges for creators to distribute trust everywhere, and a clean JSON bundle for developers. It’s aligned with the hackathon’s app catalog and developer tooling tracks — and it turns verification into something that can actually spread.”
 
-## 9. Agentic monitors: /monitors → /monitors/new → /monitors/[id]
+## 8. Agentic monitors: /monitors → /monitors/new → /monitors/[id]
 - **URL:** /monitors
 - **Shot:** Monitors list page, then the create monitor page, then a monitor detail page showing run history and any generated artifacts.
 - **Steps:**
@@ -135,7 +122,7 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
 - **Voiceover:**
   > “This is the agentic part of CortSeal: monitors run automatically in the background. Instead of a one-off audit, you can watch a feed and continuously produce trust artifacts over time — with optional Discord alerts. That directly maps to the hackathon’s agentic applications and infra observability themes.”
 
-## 10. Developer surface: OpenAPI + public validator endpoint
+## 9. Developer surface: OpenAPI + public validator endpoint
 - **URL:** /api/openapi.json
 - **Shot:** Browser showing OpenAPI JSON; then Terminal showing a `curl` POST to `/api/validate` returning `cortseal:validate:v1` with seal metadata.
 - **Steps:**
@@ -156,3 +143,16 @@ One-liner: CortSeal turns creator content into shareable trust seals by verifyin
   2. **Verify final state:** Open `http://localhost:3000/seal/[SEAL_PUBLIC_ID]` in a new tab and confirm you can also reach `http://localhost:3000/api/badge/[SEAL_PUBLIC_ID].svg`, `http://localhost:3000/embed/[SEAL_PUBLIC_ID]`, and `http://localhost:3000/api/seals/[SEAL_PUBLIC_ID]` without errors.
 - **Voiceover:**
   > “In one flow, we proved CortSeal’s full user journey: draft checks, source audits, single-claim validation, shareable public seals, and downloadable proof artifacts — plus agentic monitors and a developer-ready OpenAPI surface. This is exactly aligned with Cortensor Hackathon #3: agentic apps, PoI redundancy, PoUW scoring, attestations, and public-good endpoints. Try it at [DEMO_URL].”
+
+## 10. Landing page: what CortSeal does (problem → solution)
+- **URL:** /
+- **Shot:** `http://localhost:3000/` in the browser; a clean landing experience describing audits, trust seals, proofs, and public endpoints.
+- **Steps:**
+  1. **Current page:** Browser — confirm you’re not currently on the Cortensor Dashboard tab.
+  2. **Navigate:** Open URL directly: `http://localhost:3000/` → confirm the address bar shows `http://localhost:3000/`.
+  3. **Current page:** Landing page — confirm you can see the CortSeal branding and a clear “what this does” section.
+  4. **Action:** Scroll the page slowly — pause when you see sections describing (a) Draft audits, (b) URL audits, (c) Claim validation + seals, (d) Monitors, and (e) Public API.
+  5. **Action:** Scroll back to the top — pause on the primary call-to-action area.
+  6. **Verify on-screen:** The landing page clearly communicates the workflow: input content → extract claims → verify with redundancy → produce shareable seal + downloadable proof artifacts.
+- **Voiceover:**
+  > “CortSeal solves a simple creator problem: you want to publish confidently, but you also want proof. The app extracts verifiable claims from your draft or a public page, runs redundant decentralized inference to measure agreement and disagreement, adds a rubric score for trust, and then publishes a shareable seal with an evidence bundle that anyone can inspect.”
