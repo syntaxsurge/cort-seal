@@ -329,19 +329,21 @@ export default function Home() {
             <CardContent className="grid gap-3 text-sm sm:grid-cols-2">
               <div className="rounded-2xl border border-border/60 bg-background/80 p-3">
                 <p className="text-xs text-muted-foreground">Public seal</p>
-                <p className="mt-1 font-medium">/seal/[publicId]</p>
+                <p className="mt-1 font-mono text-sm font-medium break-all">/seal/[publicId]</p>
               </div>
               <div className="rounded-2xl border border-border/60 bg-background/80 p-3">
                 <p className="text-xs text-muted-foreground">Embed card</p>
-                <p className="mt-1 font-medium">/embed/[publicId]</p>
+                <p className="mt-1 font-mono text-sm font-medium break-all">/embed/[publicId]</p>
               </div>
               <div className="rounded-2xl border border-border/60 bg-background/80 p-3">
                 <p className="text-xs text-muted-foreground">Proof bundle</p>
-                <p className="mt-1 font-medium">/api/proofs/[id]</p>
+                <p className="mt-1 font-mono text-sm font-medium break-all">/api/proofs/[id]</p>
               </div>
               <div className="rounded-2xl border border-border/60 bg-background/80 p-3">
                 <p className="text-xs text-muted-foreground">Evidence JSON</p>
-                <p className="mt-1 font-medium">/api/analyses/[id]/evidence</p>
+                <p className="mt-1 font-mono text-sm font-medium break-all">
+                  /api/analyses/[id]/evidence
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -358,7 +360,7 @@ export default function Home() {
         </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {coreRoutes.map((route) => (
-            <Link key={route.title} href={route.href} className="group">
+            <Link key={route.title} href={route.href} className="group min-w-0">
               <Card className="h-full border-border/60 bg-card/80 transition hover:-translate-y-1 hover:shadow-lg">
                 <CardHeader className="space-y-4">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/60 bg-background/80">
@@ -370,7 +372,9 @@ export default function Home() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-xs font-mono text-muted-foreground">{route.path}</p>
+                  <p className="text-xs font-mono text-muted-foreground break-all">
+                    {route.path}
+                  </p>
                 </CardContent>
               </Card>
             </Link>
@@ -398,18 +402,20 @@ export default function Home() {
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="group flex items-start gap-3 rounded-2xl border border-border/60 bg-background/80 p-3 transition hover:border-primary/40"
+                    className="group flex min-w-0 items-start gap-3 rounded-2xl border border-border/60 bg-background/80 p-3 transition hover:border-primary/40"
                   >
                     <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 bg-background/80">
                       <item.icon className="h-4 w-4 text-primary" />
                     </span>
-                    <div className="flex-1 space-y-1">
+                    <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-semibold">{item.title}</p>
                         <span className="text-xs font-medium text-primary">{item.linkLabel}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{item.description}</p>
-                      <p className="text-xs font-mono text-muted-foreground">{item.path}</p>
+                      <p className="text-xs font-mono text-muted-foreground break-all">
+                        {item.path}
+                      </p>
                     </div>
                   </Link>
                 ))}

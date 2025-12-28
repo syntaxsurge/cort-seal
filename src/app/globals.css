@@ -85,21 +85,21 @@
 .dark {
   --background: oklch(0.19 0.04 268.6);
   --foreground: oklch(0.96 0.01 260);
-  --card: oklch(0.23 0.05 270);
+  --card: oklch(0.26 0.05 270);
   --card-foreground: oklch(0.96 0.01 260);
-  --popover: oklch(0.23 0.05 270);
+  --popover: oklch(0.26 0.05 270);
   --popover-foreground: oklch(0.96 0.01 260);
   --primary: oklch(0.66 0.2 265.8);
   --primary-foreground: oklch(0.98 0.01 260);
-  --secondary: oklch(0.28 0.05 280);
+  --secondary: oklch(0.32 0.05 280);
   --secondary-foreground: oklch(0.98 0.01 260);
-  --muted: oklch(0.3 0.04 270);
-  --muted-foreground: oklch(0.78 0.03 260);
-  --accent: oklch(0.62 0.14 160);
+  --muted: oklch(0.34 0.04 270);
+  --muted-foreground: oklch(0.82 0.03 260);
+  --accent: oklch(0.68 0.14 160);
   --accent-foreground: oklch(0.14 0.05 165);
   --destructive: oklch(0.62 0.2 28);
-  --border: oklch(0.38 0.05 270);
-  --input: oklch(0.32 0.05 270);
+  --border: oklch(0.45 0.05 270);
+  --input: oklch(0.38 0.05 270);
   --ring: oklch(0.67 0.19 265);
   --chart-1: oklch(0.646 0.204 290.9);
   --chart-2: oklch(0.66 0.2 265.8);
@@ -120,8 +120,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    overflow-x: hidden;
+  }
   body {
     @apply bg-background text-foreground font-sans;
+    overflow-x: hidden;
     background-image:
       radial-gradient(900px 600px at 6% -12%, rgba(60, 135, 253, 0.25), transparent 60%),
       radial-gradient(760px 520px at 92% -18%, rgba(146, 111, 254, 0.22), transparent 60%),
@@ -161,7 +165,7 @@
   background-color: var(--card);
   background-image: linear-gradient(
     160deg,
-    color-mix(in oklch, var(--card) 92%, black 8%),
+    color-mix(in oklch, var(--card) 92%, white 8%),
     color-mix(in oklch, var(--card) 78%, var(--primary) 12%)
   );
   box-shadow:
